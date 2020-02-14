@@ -1,25 +1,21 @@
 //IIFE - Immediately Invoked Function Expression
 //means -> self-executing anonymous function
-let Game = (function() {
+let game = (function() {
   // variable declarations
   let canvas: HTMLCanvasElement = document.getElementsByTagName("canvas")[0];
   let stage: createjs.Stage;
-  let background: objects.Image;
-  let reelBack1: objects.Image;
-  let reelBack2: objects.Image;
-  let reelBack3: objects.Image;
-  let welcomeLabel: objects.Label;
-  let startButton: objects.Button;
+  let helloLabel: objects.Label;
+  let goodByeLabel: objects.Label;
+  let dy = 2;
+  let clickMeButton: objects.Button;
+  let resetButton: objects.Button;
+  let background: createjs.Bitmap;
 
   /**
    * This method initializes the CreateJS (EaselJS) Library
    * It sets the framerate to 60 FPS and sets up the main Game Loop (Update)
    */
   function Start(): void {
-    console.log(
-      `%c Game Started!`,
-      "color: blue; font-size: 20px; font-weight: bold;"
-    );
     stage = new createjs.Stage(canvas);
     createjs.Ticker.framerate = 60; // 60 FPS
     createjs.Ticker.on("tick", Update);
@@ -40,43 +36,55 @@ let Game = (function() {
    *
    */
   function Main(): void {
-    console.log(`%c Main Started...`, "color: green; font-size: 16px;");
-
-    background = new objects.Image("./Assets/images/background.png");
+    background = new createjs.Bitmap("./Assets/images/background.png");
     stage.addChild(background);
 
-    reelBack1 = new objects.Image("./Assets/images/reel.png");
-    stage.addChild(reelBack1);
-
-    reelBack2 = new objects.Image("./Assets/images/reel.png", 100);
-    stage.addChild(reelBack2);
-
-    reelBack3 = new objects.Image("./Assets/images/reel.png", 200);
-    stage.addChild(reelBack3);
-
     //instantiate a new Text object
-    welcomeLabel = new objects.Label(
-      "The Game",
-      "80px",
+    helloLabel = new objects.Label(
+      "Hello, World!",
+      "40px",
       "Consolas",
-      "#000000",
+      "#FFFFFF",
       320,
-      180,
+      240,
       true
     );
-    stage.addChild(welcomeLabel);
+    stage.addChild(helloLabel);
+
+    goodByeLabel = new objects.Label(
+      "Good Bye",
+      "30px",
+      "Arial",
+      "#FFFFFF",
+      320,
+      300,
+      true
+    );
+    stage.addChild(goodByeLabel);
 
     // buttons
-    startButton = new objects.Button(
-      "./Assets/images/startButton.png",
-      320,
+    clickMeButton = new objects.Button(
+      "./Assets/images/clickMeButton.png",
+      550,
       430,
       true
     );
-    stage.addChild(startButton);
+    stage.addChild(clickMeButton);
 
-    startButton.on("click", function() {
-      welcomeLabel.setText("clicked!");
+    clickMeButton.on("click", function() {
+      helloLabel.setText("clicked!");
+    });
+
+    resetButton = new objects.Button(
+      "./Assets/images/resetButton.png",
+      150,
+      430,
+      true
+    );
+    stage.addChild(resetButton);
+
+    resetButton.on("click", function() {
+      helloLabel.setText("Hello, World!");
     });
   }
 

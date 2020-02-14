@@ -1,29 +1,23 @@
 module objects {
-  export class Image extends GameObject {
+  export class Image extends createjs.Bitmap {
     // constructor
     constructor(
-      imagePath: string = "./Assets/images/placeholder.png",
+      imagePath: string = "./Assets/images/button.png",
       x: number = 0,
       y: number = 0,
       isCentered: boolean = false
     ) {
-      super(imagePath, x, y, isCentered);
+      super(imagePath);
 
-      this.Start();
+      this.image.addEventListener("load", () => {
+        if (isCentered) {
+          this.regX = this.getBounds().width * 0.5;
+          this.regY = this.getBounds().height * 0.5;
+        }
+
+        this.x = x;
+        this.y = y;
+      });
     }
-
-    // PRIVATE METHODS
-    protected _checkBounds(): void {}
-
-    /**
-     * This function is used for initialization
-     *
-     * @memberof Button
-     */
-    public Start(): void {}
-
-    public Update(): void {}
-
-    public Reset(): void {}
   }
 }
