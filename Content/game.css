@@ -1,5 +1,11 @@
-#canvas
-{
+#canvas {
     border: 1px dotted black;
     border-radius: 5px;
+}
+
+@font-face {
+    font-family: 'DigitalMono';
+    font-style: normal;
+    font-weight: normal;
+    src: url(../Assets/fonts/digital7_mono.ttf) format('truetype');
 }

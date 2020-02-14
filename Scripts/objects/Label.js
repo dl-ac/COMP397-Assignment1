@@ -5,11 +5,7 @@ var objects;
         // constructor
         constructor(labelString = "empty label", fontSize = "12px", fontFamily = "Consolas", fontColour = "#000000", x = 0, y = 0, isCentered = false) {
             super(labelString, fontSize + " " + fontFamily, fontColour);
-            this.labelString = labelString;
-            this.fontSize = fontSize;
-            this.fontFamily = fontFamily;
-            this.fontColour = fontColour;
-            this.isCentered = isCentered;
+            this._isCentered = isCentered;
             if (isCentered) {
                 this.regX = this.getBounds().width * 0.5;
                 this.regY = this.getMeasuredLineHeight() * 0.5;
@@ -20,8 +16,10 @@ var objects;
         // methods
         setText(newText) {
             this.text = newText;
-            this.regX = this.getBounds().width * 0.5;
-            this.regY = this.getMeasuredLineHeight() * 0.5;
+            if (this._isCentered) {
+                this.regX = this.getBounds().width * 0.5;
+                this.regY = this.getMeasuredLineHeight() * 0.5;
+            }
         }
     }
     objects.Label = Label;
