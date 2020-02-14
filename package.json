@@ -1,0 +1,21 @@
+{
+  "name": "slot-machine-wow-bfa",
+  "version": "1.0.0",
+  "description": "COMP397 - Assignment 1 - Slot Machine",
+  "main": "game.js",
+  "author": "Ailton De Lima (301018951)",
+  "license": "MIT",
+  "dependencies": {
+    "createjs": "^1.0.1",
+    "easeljs": "^1.0.2",
+    "preloadjs": "^1.0.1",
+    "soundjs": "^1.0.1",
+    "tweenjs": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/easeljs": "^1.0.0",
+    "@types/preloadjs": "^0.6.32",
+    "@types/soundjs": "^0.6.27",
+    "@types/tweenjs": "^1.0.0"
+  }
+}
