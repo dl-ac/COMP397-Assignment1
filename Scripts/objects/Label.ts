@@ -31,7 +31,7 @@ module objects {
       this.text = newText;
       if (this._isCentered) {
         this.regX = this.getBounds().width * 0.5;
-        this.regY = this.getMeasuredLineHeight() * 0.5;
+        //          this.regY = this.getMeasuredLineHeight() * 0.5;
       }
     }
   }

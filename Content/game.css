@@ -9,3 +9,10 @@
     font-weight: normal;
     src: url(../Assets/fonts/digital7_mono.ttf) format('truetype');
 }
+
+@font-face {
+    font-family: 'SubwayTicker';
+    font-style: normal;
+    font-weight: normal;
+    src: url(../Assets/fonts/SubT.ttf) format('truetype');
+}
