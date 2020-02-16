@@ -8,5 +8,6 @@ module config {
     public static ASSETS: createjs.LoadQueue;
     public static FPS: number = 60; // 60 Frames per second
     public static VALUE_MANAGER: managers.InternalValues;
+    public static SPIN_RESULT_MANAGER: managers.SpinAndResult;
   }
 }

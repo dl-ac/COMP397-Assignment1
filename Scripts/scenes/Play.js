@@ -50,6 +50,7 @@ var scenes;
         Play.prototype.Update = function () { };
         Play.prototype.Main = function () {
             this.addChild(this._background);
+            config.Game.SPIN_RESULT_MANAGER.AddObjectsToScene(this);
             // Add the buttons to the stage
             this.addChild(this._spinButton);
             this.addChild(this._twoDollarButton);

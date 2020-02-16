@@ -31,7 +31,8 @@ let Game = (function() {
     { id: "twoCAD", src: "./Assets/images/2CAD.png" },
     { id: "fiveCAD", src: "./Assets/images/5CAD.png" },
     { id: "twentyCAD", src: "./Assets/images/20CAD.png" },
-    { id: "hundredCAD", src: "./Assets/images/100CAD.png" }
+    { id: "hundredCAD", src: "./Assets/images/100CAD.png" },
+    { id: "emptyReel", src: "./Assets/images/emptyReel.png" }
   ];
 
   function Preload(): void {
@@ -59,6 +60,7 @@ let Game = (function() {
     config.Game.SCREEN_HEIGHT = canvas.height;
 
     config.Game.VALUE_MANAGER = new managers.InternalValues();
+    config.Game.SPIN_RESULT_MANAGER = new managers.SpinAndResult();
   }
 
   /**

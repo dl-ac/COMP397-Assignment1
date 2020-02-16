@@ -58,6 +58,7 @@ module scenes {
 
     public Main(): void {
       this.addChild(this._background);
+      config.Game.SPIN_RESULT_MANAGER.AddObjectsToScene(this);
 
       // Add the buttons to the stage
       this.addChild(this._spinButton);

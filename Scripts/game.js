@@ -27,7 +27,8 @@ var Game = (function () {
         { id: "twoCAD", src: "./Assets/images/2CAD.png" },
         { id: "fiveCAD", src: "./Assets/images/5CAD.png" },
         { id: "twentyCAD", src: "./Assets/images/20CAD.png" },
-        { id: "hundredCAD", src: "./Assets/images/100CAD.png" }
+        { id: "hundredCAD", src: "./Assets/images/100CAD.png" },
+        { id: "emptyReel", src: "./Assets/images/emptyReel.png" }
     ];
     function Preload() {
         assets = new createjs.LoadQueue(); // asset container
@@ -51,6 +52,7 @@ var Game = (function () {
         config.Game.SCREEN_WIDTH = canvas.width;
         config.Game.SCREEN_HEIGHT = canvas.height;
         config.Game.VALUE_MANAGER = new managers.InternalValues();
+        config.Game.SPIN_RESULT_MANAGER = new managers.SpinAndResult();
     }
     /**
      * This function is triggered every frame (16ms)
