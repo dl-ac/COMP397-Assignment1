@@ -38,6 +38,7 @@ var scenes;
             this._maxBetButton = new objects.Button("betMaxButton", 370, 515, false);
             this._linesButton = new objects.Button("payLinesButton", 520, 515, false);
             // Add buttons events
+            this._spinButton.on("click", this.SpinClick);
             this._twoDollarButton.on("click", this.AddCreditClick);
             this._fiveDollarButton.on("click", this.AddCreditClick);
             this._twentyDollarButton.on("click", this.AddCreditClick);
@@ -90,6 +91,9 @@ var scenes;
         };
         Play.prototype.LinesClick = function () {
             config.Game.VALUE_MANAGER.PayLines();
+        };
+        Play.prototype.SpinClick = function () {
+            config.Game.SPIN_RESULT_MANAGER.SpinAndStop();
         };
         return Play;
     }(objects.Scene));

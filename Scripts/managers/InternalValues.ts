@@ -7,11 +7,25 @@ module managers {
     public static MAX_JACKPOT: number = 99999999;
     public static BET_BASE_VALUES: Array<number> = [1, 2, 3, 5, 10, 15, 20, 25, 30, 50, 75, 100];
     public static LINES_BASE_VALUES: Array<number> = [1, 3, 5, 7, 9, 10];
+    // Array containing the 10 paylines, line one [0-4], line two [5-9] and line three [10-14]
+    // It should be in order of the pay, so the first one will be the middle of the screen (line two), and so on
+    public static PAY_LINES_POSITIONS: Array<Array<number>> = [
+      [0, 1, 2, 3, 4],
+      [5, 6, 7, 8, 9],
+      [10, 11, 12, 13, 14],
+      [0, 6, 12, 8, 4],
+      [10, 6, 2, 8, 14],
+      [5, 11, 12, 13, 9],
+      [5, 1, 2, 3, 9],
+      [10, 11, 7, 3, 4],
+      [0, 1, 7, 13, 14],
+      [10, 6, 7, 8, 4]
+    ];
 
     // PRIVATE FIELDS
     private _credits: number;
     private _jackpot: number;
-    private _bet: number;
+    private _betTotal: number;
     private _lines: number;
     private _betId: number;
     private _linesId: number;
@@ -26,8 +40,8 @@ module managers {
       return this._credits;
     }
 
-    get Bet(): number {
-      return this._bet;
+    get TotalBet(): number {
+      return this._betTotal;
     }
 
     get Lines(): number {
@@ -36,6 +50,10 @@ module managers {
 
     get Jackpot(): number {
       return this._jackpot;
+    }
+
+    get SingleBet(): number {
+      return InternalValues.BET_BASE_VALUES[this._betId];
     }
 
     // CONSTRUCTOR
@@ -51,7 +69,7 @@ module managers {
       this._linesId = linesId >= 0 && linesId < InternalValues.LINES_BASE_VALUES.length ? linesId : 0;
 
       this._lines = InternalValues.LINES_BASE_VALUES[this._linesId];
-      this._bet = InternalValues.BET_BASE_VALUES[this._betId] * this._lines;
+      this._betTotal = InternalValues.BET_BASE_VALUES[this._betId] * this._lines;
 
       this.Start();
     }
@@ -59,7 +77,7 @@ module managers {
     // Initialize local objects
     public Start(): void {
       this._creditLcd = new objects.LcdDisplay("largeFrame", "CREDITS", this._credits, 20, 430, false);
-      this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._bet, 310, 430, false);
+      this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._betTotal, 310, 430, false);
       this._linesLcd = new objects.LcdDisplay("smallFrame", "LINES", this._lines, 510, 430, false);
     }
 
@@ -79,7 +97,7 @@ module managers {
 
       if (nextBetValue <= this._credits) {
         // The bet value is always updated, so dont need to verify
-        this._bet = nextBetValue;
+        this._betTotal = nextBetValue;
         this._betId = betId;
         this._betLcd.Value = nextBetValue;
 

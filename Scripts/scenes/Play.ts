@@ -43,6 +43,7 @@ module scenes {
       this._linesButton = new objects.Button("payLinesButton", 520, 515, false);
 
       // Add buttons events
+      this._spinButton.on("click", this.SpinClick);
       this._twoDollarButton.on("click", this.AddCreditClick);
       this._fiveDollarButton.on("click", this.AddCreditClick);
       this._twentyDollarButton.on("click", this.AddCreditClick);
@@ -105,6 +106,10 @@ module scenes {
 
     private LinesClick(): void {
       config.Game.VALUE_MANAGER.PayLines();
+    }
+
+    private SpinClick(): void {
+      config.Game.SPIN_RESULT_MANAGER.SpinAndStop();
     }
   }
 }

@@ -6,7 +6,7 @@ module objects {
     TIFA,
     AERIS,
     YUFFIE,
-    VICENT,
+    VINCENT,
     CID,
     RED_XIII,
     NUM_OF_FIGURES

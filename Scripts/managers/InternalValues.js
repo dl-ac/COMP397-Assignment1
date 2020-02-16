@@ -13,7 +13,7 @@ var managers;
             this._betId = betId >= 0 && betId < InternalValues.BET_BASE_VALUES.length ? betId : 0;
             this._linesId = linesId >= 0 && linesId < InternalValues.LINES_BASE_VALUES.length ? linesId : 0;
             this._lines = InternalValues.LINES_BASE_VALUES[this._linesId];
-            this._bet = InternalValues.BET_BASE_VALUES[this._betId] * this._lines;
+            this._betTotal = InternalValues.BET_BASE_VALUES[this._betId] * this._lines;
             this.Start();
         }
         Object.defineProperty(InternalValues.prototype, "Credits", {
@@ -24,9 +24,9 @@ var managers;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(InternalValues.prototype, "Bet", {
+        Object.defineProperty(InternalValues.prototype, "TotalBet", {
             get: function () {
-                return this._bet;
+                return this._betTotal;
             },
             enumerable: true,
             configurable: true
@@ -45,10 +45,17 @@ var managers;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(InternalValues.prototype, "SingleBet", {
+            get: function () {
+                return InternalValues.BET_BASE_VALUES[this._betId];
+            },
+            enumerable: true,
+            configurable: true
+        });
         // Initialize local objects
         InternalValues.prototype.Start = function () {
             this._creditLcd = new objects.LcdDisplay("largeFrame", "CREDITS", this._credits, 20, 430, false);
-            this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._bet, 310, 430, false);
+            this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._betTotal, 310, 430, false);
             this._linesLcd = new objects.LcdDisplay("smallFrame", "LINES", this._lines, 510, 430, false);
         };
         // Add objects to a scene
@@ -65,7 +72,7 @@ var managers;
             var nextBetValue = InternalValues.BET_BASE_VALUES[betId] * InternalValues.LINES_BASE_VALUES[lineId];
             if (nextBetValue <= this._credits) {
                 // The bet value is always updated, so dont need to verify
-                this._bet = nextBetValue;
+                this._betTotal = nextBetValue;
                 this._betId = betId;
                 this._betLcd.Value = nextBetValue;
                 // Only update the lines if the value changed
@@ -154,6 +161,20 @@ var managers;
         InternalValues.MAX_JACKPOT = 99999999;
         InternalValues.BET_BASE_VALUES = [1, 2, 3, 5, 10, 15, 20, 25, 30, 50, 75, 100];
         InternalValues.LINES_BASE_VALUES = [1, 3, 5, 7, 9, 10];
+        // Array containing the 10 paylines, line one [0-4], line two [5-9] and line three [10-14]
+        // It should be in order of the pay, so the first one will be the middle of the screen (line two), and so on
+        InternalValues.PAY_LINES_POSITIONS = [
+            [0, 1, 2, 3, 4],
+            [5, 6, 7, 8, 9],
+            [10, 11, 12, 13, 14],
+            [0, 6, 12, 8, 4],
+            [10, 6, 2, 8, 14],
+            [5, 11, 12, 13, 9],
+            [5, 1, 2, 3, 9],
+            [10, 11, 7, 3, 4],
+            [0, 1, 7, 13, 14],
+            [10, 6, 7, 8, 4]
+        ];
         return InternalValues;
     }());
     managers.InternalValues = InternalValues;
