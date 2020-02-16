@@ -1,74 +1,64 @@
 //IIFE - Immediately Invoked Function Expression
 //means -> self-executing anonymous function
-let game = (function() {
-  // Constants declarations
-  const MAX_CREDITS: number = 9999999999;
-
+let Game = (function() {
   // variable declarations
   let canvas: HTMLCanvasElement = document.getElementsByTagName("canvas")[0];
   let stage: createjs.Stage;
 
-  // Screen items declaration
-  // Background static images
-  let background: objects.Image;
-  let reelSlot1: objects.Image;
-  let reelSlot2: objects.Image;
-  let reelSlot3: objects.Image;
-  let jackpotFrame: objects.Image;
-  let creditsFrame: objects.Image;
-  let betFrame: objects.Image;
-  let linesFrame: objects.Image;
+  let currentSceneState: scenes.State;
+  let currentScene: objects.Scene;
 
-  // Buttons
-  let betButton: objects.Button;
-  let maxBetButton: objects.Button;
-  let linesButton: objects.Button;
-  let spinButton: objects.Button;
-  let twoDollarButton: objects.Button;
-  let fiveDollarButton: objects.Button;
-  let twentyDollarButton: objects.Button;
-  let hundredDollarButton: objects.Button;
+  let assets: createjs.LoadQueue;
 
-  // Labels
-  let jackpotLabel: objects.Label;
-  let creditsLabel: objects.Label;
-  let betLabel: objects.Label;
+  let valueManager: managers.InternalValues;
 
-  // Local values
-  let betValues: Array<number>;
-  let jackpot: number;
-  let credits: number;
-  let betId: number;
-  let linesId: number;
+  let assetManifest = [
+    // { id: "button", src: "./Assets/images/button.png" },
+    // { id: "placeholder", src: "./Assets/images/placeholder.png" },
+    // { id: "startButton", src: "./Assets/images/startButton.png" },
+    // { id: "nextButton", src: "./Assets/images/nextButton.png" },
+    // { id: "backButton", src: "./Assets/images/backButton.png" },
+    // { id: "ocean", src: "./Assets/images/ocean.gif" },
+    // { id: "plane", src: "./Assets/images/plane.png" },
 
-  let helloLabel: objects.Label;
-  let goodByeLabel: objects.Label;
+    { id: "background", src: "./Assets/images/background.png" },
+    { id: "largeFrame", src: "./Assets/images/frameLarge.png" },
+    { id: "smallFrame", src: "./Assets/images/frameSmall.png" },
+    { id: "betOneButton", src: "./Assets/images/betOneBtn.png" },
+    { id: "betMaxButton", src: "./Assets/images/betMaxBtn.png" },
+    { id: "payLinesButton", src: "./Assets/images/payLinesBtn.png" },
+    { id: "spinButton", src: "./Assets/images/spinBtn.png" },
+    { id: "twoCAD", src: "./Assets/images/2CAD.png" },
+    { id: "fiveCAD", src: "./Assets/images/5CAD.png" },
+    { id: "twentyCAD", src: "./Assets/images/20CAD.png" },
+    { id: "hundredCAD", src: "./Assets/images/100CAD.png" }
+  ];
 
-  let resetButton: objects.Button;
+  function Preload(): void {
+    assets = new createjs.LoadQueue(); // asset container
+    config.Game.ASSETS = assets; // make a reference to the assets in the global config
+    assets.installPlugin(createjs.Sound); // supports sound preloading
+    assets.loadManifest(assetManifest);
+    assets.on("complete", Start);
+  }
 
   /**
    * This method initializes the CreateJS (EaselJS) Library
    * It sets the framerate to 60 FPS and sets up the main Game Loop (Update)
    */
   function Start(): void {
-    initializeSystem();
+    console.log(`%c Game Started!`, "color: blue; font-size: 20px; font-weight: bold;");
     stage = new createjs.Stage(canvas);
-    createjs.Ticker.framerate = 60; // 60 FPS
+    createjs.Ticker.framerate = config.Game.FPS;
     createjs.Ticker.on("tick", Update);
     stage.enableMouseOver(20);
-    Main();
-  }
 
-  /**
-   * Initialize the global values of the game
-   *
-   */
-  function initializeSystem(): void {
-    betValues = [1, 2, 3, 5, 10, 15, 20, 25, 30, 50, 75, 100];
-    jackpot = 10000000;
-    credits = 10000;
-    betId = 0;
-    linesId = 0;
+    currentSceneState = scenes.State.NO_SCENE;
+    config.Game.SCENE = scenes.State.PLAY;
+    config.Game.SCREEN_WIDTH = canvas.width;
+    config.Game.SCREEN_HEIGHT = canvas.height;
+
+    config.Game.VALUE_MANAGER = new managers.InternalValues();
   }
 
   /**
@@ -76,58 +66,13 @@ let game = (function() {
    * The stage is then erased and redrawn
    */
   function Update(): void {
+    if (currentSceneState != config.Game.SCENE) {
+      Main();
+    }
+
+    currentScene.Update();
+
     stage.update();
-  }
-
-  function BetOneClick(): void {
-    betId++;
-    if (betId >= betValues.length) {
-      betId = 0;
-    }
-    betLabel.setText(betValues[betId].toString());
-  }
-
-  function MaxBetClick(): void {
-    betId = betValues.length - 1;
-    betLabel.setText(betValues[betId].toString());
-  }
-
-  function AddCreditClick(e: Object): void {
-    let evt: MouseEvent = e as MouseEvent;
-
-    switch (evt.currentTarget) {
-      case twoDollarButton:
-        maintainCredits(200);
-        break;
-      case fiveDollarButton:
-        maintainCredits(500);
-        break;
-      case twentyDollarButton:
-        maintainCredits(2000);
-        break;
-      case hundredDollarButton:
-        maintainCredits(10000);
-        break;
-    }
-  }
-
-  function maintainCredits(value: number, isDebit: boolean = false): boolean {
-    if (isDebit) {
-      if (credits - value >= 0) {
-        credits -= value;
-      } else {
-        return false;
-      }
-    } else {
-      if (credits + value <= MAX_CREDITS) {
-        credits += value;
-      } else {
-        return false;
-      }
-    }
-
-    creditsLabel.setText(Math.floor(credits).toString());
-    return true;
   }
 
   /**
@@ -135,86 +80,26 @@ let game = (function() {
    *
    */
   function Main(): void {
-    // Background object
-    background = new objects.Image("./Assets/images/background.png");
-    stage.addChild(background);
-    jackpotFrame = new objects.Image("./Assets/images/jackpot.png", 0, 20);
-    stage.addChild(jackpotFrame);
-    creditsFrame = new objects.Image("./Assets/images/credits.png", 10, 430);
-    stage.addChild(creditsFrame);
-    betFrame = new objects.Image("./Assets/images/betFrame.png", 255, 430);
-    stage.addChild(betFrame);
-    linesFrame = new objects.Image("./Assets/images/linesFrame.png", 400, 430);
-    stage.addChild(linesFrame);
+    console.log(`%c Scene Switched...`, "color: green; font-size: 16px;");
 
-    // Reel slots
-    reelSlot1 = new objects.Image("./Assets/images/emptyReel.png", 60, 170);
-    stage.addChild(reelSlot1);
-    reelSlot2 = new objects.Image("./Assets/images/emptyReel.png", 210, 170);
-    stage.addChild(reelSlot2);
-    reelSlot3 = new objects.Image("./Assets/images/emptyReel.png", 360, 170);
-    stage.addChild(reelSlot3);
-    reelSlot3 = new objects.Image("./Assets/images/emptyReel.png", 510, 170);
-    stage.addChild(reelSlot3);
-    reelSlot3 = new objects.Image("./Assets/images/emptyReel.png", 660, 170);
-    stage.addChild(reelSlot3);
+    // clean up
+    if (currentSceneState != scenes.State.NO_SCENE) {
+      currentScene.removeAllChildren();
+      stage.removeAllChildren();
+    }
 
-    // Create the label values
-    jackpotLabel = new objects.Label(jackpot.toString(), "50px", "DigitalMono", "#BF190D", 160, 72, true);
-    stage.addChild(jackpotLabel);
-    creditsLabel = new objects.Label(credits.toString(), "36px", "DigitalMono", "#BF190D", 115, 482, true);
-    stage.addChild(creditsLabel);
-    betLabel = new objects.Label(betValues[betId].toString(), "36px", "DigitalMono", "#BF190D", 305, 482, true);
-    stage.addChild(betLabel);
+    // switch to the new scene
 
-    // buttons
-    spinButton = new objects.Button("./Assets/images/spinBtn.png", 950, 525, true);
-    stage.addChild(spinButton);
+    switch (config.Game.SCENE) {
+      case scenes.State.PLAY:
+        console.log("switch to Play Scene");
+        currentScene = new scenes.Play();
+        break;
+    }
 
-    spinButton.on("click", function() {
-      helloLabel.setText("clicked!");
-    });
-
-    betButton = new objects.Button("./Assets/images/betOneBtn.png", 220, 515, false);
-    stage.addChild(betButton);
-
-    maxBetButton = new objects.Button("./Assets/images/betMaxBtn.png", 310, 515, false);
-    stage.addChild(maxBetButton);
-
-    linesButton = new objects.Button("./Assets/images/payLinesBtn.png", 410, 515, false);
-    stage.addChild(linesButton);
-
-    twoDollarButton = new objects.Button("./Assets/images/2CAD.png", 10, 523, false);
-    stage.addChild(twoDollarButton);
-
-    fiveDollarButton = new objects.Button("./Assets/images/5CAD.png", 85, 515, false);
-    stage.addChild(fiveDollarButton);
-
-    twentyDollarButton = new objects.Button("./Assets/images/20CAD.png", 125, 515, false);
-    stage.addChild(twentyDollarButton);
-
-    hundredDollarButton = new objects.Button("./Assets/images/100CAD.png", 165, 515, false);
-    stage.addChild(hundredDollarButton);
-
-    // resetButton = new objects.Button(
-    //   "./Assets/images/resetButton.png",
-    //   150,
-    //   430,
-    //   true
-    // );
-    // stage.addChild(resetButton);
-
-    // resetButton.on("click", function() {
-    //   helloLabel.setText("Hello, World!");
-    // });
-    // Add buttons events
-    betButton.on("click", BetOneClick);
-    maxBetButton.on("click", MaxBetClick);
-    twoDollarButton.on("click", AddCreditClick);
-    fiveDollarButton.on("click", AddCreditClick);
-    twentyDollarButton.on("click", AddCreditClick);
-    hundredDollarButton.on("click", AddCreditClick);
+    currentSceneState = config.Game.SCENE;
+    stage.addChild(currentScene);
   }
 
-  window.addEventListener("load", Start);
+  window.addEventListener("load", Preload);
 })();

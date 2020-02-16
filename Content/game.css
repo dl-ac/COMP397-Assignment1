@@ -1,6 +1,17 @@
+body {
+    background-color: lightgray;
+}
+
 #canvas {
+    background-color: white;
     border: 1px dotted black;
-    border-radius: 5px;
+    border-radius: 10px;
+    margin: 0 auto;
+    display: block;
+}
+
+#mainContent {
+    width: 100%;
 }
 
 @font-face {
@@ -8,11 +19,4 @@
     font-style: normal;
     font-weight: normal;
     src: url(../Assets/fonts/digital7_mono.ttf) format('truetype');
-}
-
-@font-face {
-    font-family: 'SubwayTicker';
-    font-style: normal;
-    font-weight: normal;
-    src: url(../Assets/fonts/SubT.ttf) format('truetype');
 }

@@ -1,9 +1,9 @@
 {
-  "name": "slot-machine-wow-bfa",
+  "name": "comp397-assignment1-slot-machine",
   "version": "1.0.0",
-  "description": "COMP397 - Assignment 1 - Slot Machine",
+  "description": "COMP-397 - Assignment 1 - Slot Machine - World of Warcraft",
   "main": "game.js",
-  "author": "Ailton De Lima (301018951)",
+  "author": "Ailton De Lima",
   "license": "MIT",
   "dependencies": {
     "createjs": "^1.0.1",
