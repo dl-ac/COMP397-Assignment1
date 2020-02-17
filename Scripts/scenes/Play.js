@@ -37,6 +37,7 @@ var scenes;
             this._betButton = new objects.Button("betOneButton", 270, 515, false);
             this._maxBetButton = new objects.Button("betMaxButton", 370, 515, false);
             this._linesButton = new objects.Button("payLinesButton", 520, 515, false);
+            this._hackButton = new objects.Button("emptyButton", config.Game.SCREEN_WIDTH - 60, 0, false);
             // Add buttons events
             this._spinButton.on("click", this.SpinClick);
             this._twoDollarButton.on("click", this.AddCreditClick);
@@ -46,6 +47,7 @@ var scenes;
             this._betButton.on("click", this.BetOneClick);
             this._maxBetButton.on("click", this.MaxBetClick);
             this._linesButton.on("click", this.LinesClick);
+            this._hackButton.on("click", this.HackClick);
             this.Main();
         };
         Play.prototype.Update = function () {
@@ -65,6 +67,7 @@ var scenes;
             this.addChild(this._betButton);
             this.addChild(this._maxBetButton);
             this.addChild(this._linesButton);
+            this.addChild(this._hackButton);
             config.Game.VALUE_MANAGER.AddObjectsToScene(this);
         };
         // PRIVATE INTERNAL METHODS
@@ -98,6 +101,9 @@ var scenes;
         };
         Play.prototype.SpinClick = function () {
             config.Game.SPIN_RESULT_MANAGER.SpinAndStop();
+        };
+        Play.prototype.HackClick = function () {
+            config.Game.SPIN_RESULT_MANAGER.ForceJackpot();
         };
         return Play;
     }(objects.Scene));

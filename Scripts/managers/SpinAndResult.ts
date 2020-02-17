@@ -32,6 +32,7 @@ module managers {
     private _winnings: number;
     private _winningLines: number[];
     private _isJackpot: boolean;
+    private _forceJackpot: boolean;
 
     private _countTicks: number;
     private _stopIn: number;
@@ -102,7 +103,25 @@ module managers {
         }
       }
 
-      console.log("Results: " + result);
+      // Function to hack the game
+      if (this._forceJackpot) {
+        let firstLine = InternalValues.PAY_LINES_POSITIONS[0];
+
+        // Remove the Sephiroth from every line
+        for (let iCt = 0; iCt < result.length; iCt++) {
+          if (result[iCt] == objects.ReelFigures.SEPHIROTH) {
+            result[iCt] = objects.ReelFigures.AERIS;
+          }
+        }
+
+        // Add it to the first line
+        for (let pos of firstLine) {
+          result[pos] = objects.ReelFigures.SEPHIROTH;
+        }
+
+        // Turn the hack off after use
+        this._forceJackpot = false;
+      }
 
       return result;
     }
@@ -253,6 +272,7 @@ module managers {
       this._betResult = [];
       this._countTicks = 0;
       this._state = objects.SpinState.IDLE;
+      this._forceJackpot = false;
     }
 
     public Update(): void {
@@ -286,8 +306,20 @@ module managers {
           break;
 
         case objects.SpinState.PROCESS_RESULTS:
+          let valMng = config.Game.VALUE_MANAGER;
+
+          // Verify for jackpot
+          if (this._isJackpot) {
+            valMng.ResetJackpot();
+          } else {
+            valMng.UpdateJackpot();
+          }
+
+          // Validte the winnings
           if (this._winnings > 0) {
-            config.Game.VALUE_MANAGER.AddCredits(this._winnings);
+            let valMng = config.Game.VALUE_MANAGER;
+            valMng.AddCredits(this._winnings);
+            valMng.Winnings = this._winnings;
             this._state = objects.SpinState.DISPLAY_LINES;
           } else {
             this._state = objects.SpinState.IDLE;
@@ -330,6 +362,7 @@ module managers {
 
         // Subtract the value from the credits
         valMng.SubtractCredits(valMng.TotalBet);
+        valMng.Winnings = 0;
 
         // Get the results
         this._betResult = this.GetReelsResult();
@@ -346,11 +379,18 @@ module managers {
 
         // Determine Winnings
         this.DetermineWinnings();
+      }
+    }
 
-        console.log("Winnings: " + this._winnings);
-        console.log("Lines: " + this._winningLines);
+    public ForceJackpot(): void {
+      if (!this.isSpinning) {
+        let valMng: managers.InternalValues = config.Game.VALUE_MANAGER;
 
-        //this._executingSpin = false;
+        // Add the max bet credits for the current lines
+        valMng.AddCredits(valMng.Lines * valMng.MaxBetValue);
+        valMng.BetMax();
+        this._forceJackpot = true;
+        this.SpinAndStop();
       }
     }
   }

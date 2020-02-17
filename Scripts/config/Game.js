@@ -4,7 +4,7 @@ var config;
     var Game = /** @class */ (function () {
         function Game() {
         }
-        Game.DISPLAY_COLOR = "#BF190D";
+        Game.DISPLAY_COLOR = "#FF0000";
         Game.FPS = 60; // 60 Frames per second
         return Game;
     }());

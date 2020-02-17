@@ -5,6 +5,7 @@ module managers {
     public static MAX_CREDITS: number = 9999999999;
     public static INITIAL_JACKPOT: number = 10000000;
     public static MAX_JACKPOT: number = 99999999;
+    public static JACKPOT_BET_RATE_VALUE: number = 0.1;
     public static BET_BASE_VALUES: Array<number> = [1, 2, 3, 5, 10, 15, 20, 25, 30, 50, 75, 100];
     public static LINES_BASE_VALUES: Array<number> = [1, 3, 5, 7, 9, 10];
     // Array containing the 10 paylines, line one [0-4], line two [5-9] and line three [10-14]
@@ -34,10 +35,11 @@ module managers {
     private _betLcd: objects.LcdDisplay;
     private _linesLcd: objects.LcdDisplay;
     private _jackpotLcd: objects.LcdDisplay;
+    private _winningsLcd: objects.LcdDisplay;
 
     // PROPERTIES
     get Credits(): number {
-      return this._credits;
+      return Math.floor(this._credits);
     }
 
     get TotalBet(): number {
@@ -49,11 +51,19 @@ module managers {
     }
 
     get Jackpot(): number {
-      return this._jackpot;
+      return Math.floor(this._jackpot);
     }
 
     get SingleBet(): number {
       return InternalValues.BET_BASE_VALUES[this._betId];
+    }
+
+    set Winnings(newValue: number) {
+      this._winningsLcd.Value = newValue;
+    }
+
+    get MaxBetValue(): number {
+      return InternalValues.BET_BASE_VALUES[InternalValues.BET_BASE_VALUES.length - 1];
     }
 
     // CONSTRUCTOR
@@ -76,9 +86,11 @@ module managers {
 
     // Initialize local objects
     public Start(): void {
-      this._creditLcd = new objects.LcdDisplay("largeFrame", "CREDITS", this._credits, 20, 430, false);
-      this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._betTotal, 310, 430, false);
-      this._linesLcd = new objects.LcdDisplay("smallFrame", "LINES", this._lines, 510, 430, false);
+      this._creditLcd = new objects.LcdDisplay("largeFrame", "CREDITS", this._credits, 10, 450, false);
+      this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._betTotal, 310, 450, false);
+      this._linesLcd = new objects.LcdDisplay("smallFrame", "LINES", this._lines, 510, 450, false);
+      this._jackpotLcd = new objects.LcdDisplay("largeFrame", "JACKPOT", this._jackpot, 5, 5, false);
+      this._winningsLcd = new objects.LcdDisplay("largeFrame", "WINNINGS", 0, 230, 5, false);
     }
 
     // Add objects to a scene
@@ -86,9 +98,13 @@ module managers {
       scene.addChild(this._creditLcd);
       scene.addChild(this._betLcd);
       scene.addChild(this._linesLcd);
+      scene.addChild(this._jackpotLcd);
+      scene.addChild(this._winningsLcd);
       this._creditLcd.AddObjectsToScene(scene);
       this._betLcd.AddObjectsToScene(scene);
       this._linesLcd.AddObjectsToScene(scene);
+      this._jackpotLcd.AddObjectsToScene(scene);
+      this._winningsLcd.AddObjectsToScene(scene);
     }
 
     // PRIVATE  METHODS
@@ -211,6 +227,29 @@ module managers {
       }
 
       this._creditLcd.Value = this._credits;
+    }
+
+    /**
+     * Resets jackpot to the initial value
+     *
+     * @memberof InternalValues
+     */
+    public ResetJackpot(): void {
+      this._jackpot = InternalValues.INITIAL_JACKPOT;
+      this._jackpotLcd.Value = this._jackpot;
+    }
+
+    /**
+     * Update the jack pot value to add a portion of the bet
+     *
+     * @memberof InternalValues
+     */
+    public UpdateJackpot(): void {
+      this._jackpot += this._betTotal * InternalValues.JACKPOT_BET_RATE_VALUE;
+      if (this._jackpot > InternalValues.MAX_JACKPOT) {
+        this._jackpot = InternalValues.MAX_JACKPOT;
+      }
+      this._jackpotLcd.Value = this._jackpot;
     }
   }
 }

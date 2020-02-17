@@ -19,7 +19,7 @@ var managers;
         Object.defineProperty(InternalValues.prototype, "Credits", {
             // PROPERTIES
             get: function () {
-                return this._credits;
+                return Math.floor(this._credits);
             },
             enumerable: true,
             configurable: true
@@ -40,7 +40,7 @@ var managers;
         });
         Object.defineProperty(InternalValues.prototype, "Jackpot", {
             get: function () {
-                return this._jackpot;
+                return Math.floor(this._jackpot);
             },
             enumerable: true,
             configurable: true
@@ -52,20 +52,40 @@ var managers;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(InternalValues.prototype, "Winnings", {
+            set: function (newValue) {
+                this._winningsLcd.Value = newValue;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(InternalValues.prototype, "MaxBetValue", {
+            get: function () {
+                return InternalValues.BET_BASE_VALUES[InternalValues.BET_BASE_VALUES.length - 1];
+            },
+            enumerable: true,
+            configurable: true
+        });
         // Initialize local objects
         InternalValues.prototype.Start = function () {
-            this._creditLcd = new objects.LcdDisplay("largeFrame", "CREDITS", this._credits, 20, 430, false);
-            this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._betTotal, 310, 430, false);
-            this._linesLcd = new objects.LcdDisplay("smallFrame", "LINES", this._lines, 510, 430, false);
+            this._creditLcd = new objects.LcdDisplay("largeFrame", "CREDITS", this._credits, 10, 450, false);
+            this._betLcd = new objects.LcdDisplay("smallFrame", "BET", this._betTotal, 310, 450, false);
+            this._linesLcd = new objects.LcdDisplay("smallFrame", "LINES", this._lines, 510, 450, false);
+            this._jackpotLcd = new objects.LcdDisplay("largeFrame", "JACKPOT", this._jackpot, 5, 5, false);
+            this._winningsLcd = new objects.LcdDisplay("largeFrame", "WINNINGS", 0, 230, 5, false);
         };
         // Add objects to a scene
         InternalValues.prototype.AddObjectsToScene = function (scene) {
             scene.addChild(this._creditLcd);
             scene.addChild(this._betLcd);
             scene.addChild(this._linesLcd);
+            scene.addChild(this._jackpotLcd);
+            scene.addChild(this._winningsLcd);
             this._creditLcd.AddObjectsToScene(scene);
             this._betLcd.AddObjectsToScene(scene);
             this._linesLcd.AddObjectsToScene(scene);
+            this._jackpotLcd.AddObjectsToScene(scene);
+            this._winningsLcd.AddObjectsToScene(scene);
         };
         // PRIVATE  METHODS
         InternalValues.prototype.VerifyAndSetNewBetOrLine = function (betId, lineId) {
@@ -166,11 +186,33 @@ var managers;
             }
             this._creditLcd.Value = this._credits;
         };
+        /**
+         * Resets jackpot to the initial value
+         *
+         * @memberof InternalValues
+         */
+        InternalValues.prototype.ResetJackpot = function () {
+            this._jackpot = InternalValues.INITIAL_JACKPOT;
+            this._jackpotLcd.Value = this._jackpot;
+        };
+        /**
+         * Update the jack pot value to add a portion of the bet
+         *
+         * @memberof InternalValues
+         */
+        InternalValues.prototype.UpdateJackpot = function () {
+            this._jackpot += this._betTotal * InternalValues.JACKPOT_BET_RATE_VALUE;
+            if (this._jackpot > InternalValues.MAX_JACKPOT) {
+                this._jackpot = InternalValues.MAX_JACKPOT;
+            }
+            this._jackpotLcd.Value = this._jackpot;
+        };
         // CONSTANTS
         InternalValues.INITIAL_CREDITS = 10000;
         InternalValues.MAX_CREDITS = 9999999999;
         InternalValues.INITIAL_JACKPOT = 10000000;
         InternalValues.MAX_JACKPOT = 99999999;
+        InternalValues.JACKPOT_BET_RATE_VALUE = 0.1;
         InternalValues.BET_BASE_VALUES = [1, 2, 3, 5, 10, 15, 20, 25, 30, 50, 75, 100];
         InternalValues.LINES_BASE_VALUES = [1, 3, 5, 7, 9, 10];
         // Array containing the 10 paylines, line one [0-4], line two [5-9] and line three [10-14]

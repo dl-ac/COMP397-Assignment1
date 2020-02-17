@@ -1,6 +1,6 @@
 module config {
   export class Game {
-    public static DISPLAY_COLOR: string = "#BF190D";
+    public static DISPLAY_COLOR: string = "#FF0000";
 
     public static SCREEN_WIDTH: number;
     public static SCREEN_HEIGHT: number;

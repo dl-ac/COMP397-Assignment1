@@ -60,7 +60,23 @@ var managers;
                         break;
                 }
             }
-            console.log("Results: " + result);
+            // Function to hack the game
+            if (this._forceJackpot) {
+                var firstLine = managers.InternalValues.PAY_LINES_POSITIONS[0];
+                // Remove the Sephiroth from every line
+                for (var iCt = 0; iCt < result.length; iCt++) {
+                    if (result[iCt] == objects.ReelFigures.SEPHIROTH) {
+                        result[iCt] = objects.ReelFigures.AERIS;
+                    }
+                }
+                // Add it to the first line
+                for (var _i = 0, firstLine_1 = firstLine; _i < firstLine_1.length; _i++) {
+                    var pos = firstLine_1[_i];
+                    result[pos] = objects.ReelFigures.SEPHIROTH;
+                }
+                // Turn the hack off after use
+                this._forceJackpot = false;
+            }
             return result;
         };
         /**
@@ -195,6 +211,7 @@ var managers;
             this._betResult = [];
             this._countTicks = 0;
             this._state = objects.SpinState.IDLE;
+            this._forceJackpot = false;
         };
         SpinAndResult.prototype.Update = function () {
             switch (this._state) {
@@ -221,8 +238,19 @@ var managers;
                     }
                     break;
                 case objects.SpinState.PROCESS_RESULTS:
+                    var valMng = config.Game.VALUE_MANAGER;
+                    // Verify for jackpot
+                    if (this._isJackpot) {
+                        valMng.ResetJackpot();
+                    }
+                    else {
+                        valMng.UpdateJackpot();
+                    }
+                    // Validte the winnings
                     if (this._winnings > 0) {
-                        config.Game.VALUE_MANAGER.AddCredits(this._winnings);
+                        var valMng_1 = config.Game.VALUE_MANAGER;
+                        valMng_1.AddCredits(this._winnings);
+                        valMng_1.Winnings = this._winnings;
                         this._state = objects.SpinState.DISPLAY_LINES;
                     }
                     else {
@@ -259,6 +287,7 @@ var managers;
                 }
                 // Subtract the value from the credits
                 valMng.SubtractCredits(valMng.TotalBet);
+                valMng.Winnings = 0;
                 // Get the results
                 this._betResult = this.GetReelsResult();
                 this._betResultPerReel = [
@@ -272,9 +301,16 @@ var managers;
                 this.StartSpinning();
                 // Determine Winnings
                 this.DetermineWinnings();
-                console.log("Winnings: " + this._winnings);
-                console.log("Lines: " + this._winningLines);
-                //this._executingSpin = false;
+            }
+        };
+        SpinAndResult.prototype.ForceJackpot = function () {
+            if (!this.isSpinning) {
+                var valMng = config.Game.VALUE_MANAGER;
+                // Add the max bet credits for the current lines
+                valMng.AddCredits(valMng.Lines * valMng.MaxBetValue);
+                valMng.BetMax();
+                this._forceJackpot = true;
+                this.SpinAndStop();
             }
         };
         // CONSTANTS

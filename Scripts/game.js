@@ -39,7 +39,8 @@ var Game = (function () {
         { id: "Tifa", src: "./Assets/images/Tifa.png" },
         { id: "Vincent", src: "./Assets/images/Vincent.png" },
         { id: "Yuffie", src: "./Assets/images/Yuffie.png" },
-        { id: "blankReel", src: "./Assets/images/BlankReel.png" }
+        { id: "blankReel", src: "./Assets/images/BlankReel.png" },
+        { id: "emptyButton", src: "./Assets/images/emptyButton.png" }
     ];
     function Preload() {
         assets = new createjs.LoadQueue(); // asset container
