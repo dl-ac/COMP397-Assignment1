@@ -339,6 +339,12 @@ module managers {
       }
     }
 
+    /**
+     * Function to start spinning and stop if it spinning
+     *
+     * @returns {boolean}
+     * @memberof SpinAndResult
+     */
     public SpinAndStop(): boolean {
       let valMng: managers.InternalValues = config.Game.VALUE_MANAGER;
 

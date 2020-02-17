@@ -267,6 +267,12 @@ var managers;
                 this._reels[iCt].AddObjectsToScene(scene); // Add the extra objects to the scene
             }
         };
+        /**
+         * Function to start spinning and stop if it spinning
+         *
+         * @returns {boolean}
+         * @memberof SpinAndResult
+         */
         SpinAndResult.prototype.SpinAndStop = function () {
             var valMng = config.Game.VALUE_MANAGER;
             // Verify if there is a spin executing, if so, will stop the reels (only in the UI, the results is already set)
