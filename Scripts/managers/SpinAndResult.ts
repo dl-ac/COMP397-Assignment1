@@ -17,20 +17,22 @@ module managers {
     private static JACKPOT_VALUE = 5000 * InternalValues.BET_BASE_VALUES[InternalValues.BET_BASE_VALUES.length - 1];
 
     // PRIVATE CONSTANTS
-    private reelCt: number = 5;
-    private linesCt: number = 3;
+    private _reelCt: number = 5;
+    private _linesCt: number = 3;
 
     // PRIVATE INSTANCE VARIABLES
+    private _reels: objects.Reel[];
     private _reel1: objects.Button;
     private _reel2: objects.Button;
     private _reel3: objects.Button;
     private _reel4: objects.Button;
     private _reel5: objects.Button;
-    private _spinning: boolean;
+    private _executingSpin: boolean;
     private _betResult: objects.ReelFigures[];
     private _winnings: number;
     private _winningLines: number[];
     private _isJackpot: boolean;
+    private _reelsSpinning: boolean;
 
     // CONSTRUCTOR
     constructor() {
@@ -47,7 +49,7 @@ module managers {
      * @memberof SpinAndResult
      */
     private GetReelsResult(): objects.ReelFigures[] {
-      let figCt = this.reelCt * this.linesCt;
+      let figCt = this._reelCt * this._linesCt;
       let result = new Array<objects.ReelFigures>(figCt);
 
       for (let iCt: number = 0; iCt < figCt; iCt++) {
@@ -145,13 +147,13 @@ module managers {
       if (this._betResult[lineIds[0]] != this._betResult[lineIds[1]]) {
         // First and second are different, no winnings.
         winnings = 0;
-      } else if (this._betResult[lineIds[0]] != this._betResult[lineIds[3]]) {
+      } else if (this._betResult[lineIds[0]] != this._betResult[lineIds[2]]) {
         // First and third are different, check for winnings for 2 equals figure
         winnings = this.GetFigureMutiplier(this._betResult[lineIds[0]], 2) * betValue;
-      } else if (this._betResult[lineIds[0]] != this._betResult[lineIds[4]]) {
+      } else if (this._betResult[lineIds[0]] != this._betResult[lineIds[3]]) {
         // First and fourth are different, check for winning for 3 equals figure
         winnings = this.GetFigureMutiplier(this._betResult[lineIds[0]], 3) * betValue;
-      } else if (this._betResult[lineIds[0]] != this._betResult[lineIds[5]]) {
+      } else if (this._betResult[lineIds[0]] != this._betResult[lineIds[4]]) {
         // First and fifth are different, check for winning for 4 equals figure
         winnings = this.GetFigureMutiplier(this._betResult[lineIds[0]], 4) * betValue;
       } else {
@@ -185,42 +187,62 @@ module managers {
       return 0;
     }
 
+    private StartSpinning(): void {
+      this._reels[0].StartSpin([objects.ReelFigures.AERIS, objects.ReelFigures.CLOUD, objects.ReelFigures.SEPHIROTH]);
+      this._reelsSpinning = true;
+    }
+
     // PUBLIC METHODS
     // Initialize local objects
     public Start(): void {
-      this._reel1 = new objects.Button("emptyReel", 50, 140);
-      this._reel2 = new objects.Button("emptyReel", 200, 140);
-      this._reel3 = new objects.Button("emptyReel", 350, 140);
-      this._reel4 = new objects.Button("emptyReel", 500, 140);
-      this._reel5 = new objects.Button("emptyReel", 650, 140);
+      let pos = 50;
+      let initialReels: objects.ReelFigures[] = this.GetReelsResult();
+      let initialPerReel: objects.ReelFigures[][] = [
+        [initialReels[0], initialReels[5], initialReels[10]],
+        [initialReels[1], initialReels[6], initialReels[11]],
+        [initialReels[2], initialReels[7], initialReels[12]],
+        [initialReels[3], initialReels[8], initialReels[13]],
+        [initialReels[4], initialReels[9], initialReels[14]]
+      ];
 
-      this._spinning = false;
+      this._reels = new Array<objects.Reel>(this._reelCt);
+
+      for (let iCt = 0; iCt < this._reelCt; iCt++) {
+        this._reels[iCt] = new objects.Reel(initialPerReel[iCt], pos);
+        pos += 150;
+      }
+
+      this._executingSpin = false;
       this._betResult = [];
     }
 
-    public Update(): void {}
+    public Update(): void {
+      if (this._executingSpin && this._reelsSpinning) {
+        this._reels[0].Update();
+      }
+    }
 
     // Add objects to a scene
     public AddObjectsToScene(scene: objects.Scene): void {
-      scene.addChild(this._reel1);
-      scene.addChild(this._reel2);
-      scene.addChild(this._reel3);
-      scene.addChild(this._reel4);
-      scene.addChild(this._reel5);
+      for (let iCt = 0; iCt < this._reelCt; iCt++) {
+        scene.addChild(this._reels[iCt]);
+        this._reels[iCt].AddObjectsToScene(scene); // Add the extra objects to the scene
+      }
     }
 
     public SpinAndStop(): boolean {
       let valMng: managers.InternalValues = config.Game.VALUE_MANAGER;
 
       // Verify if there is a spin executing, if so, will stop the reels (only in the UI, the results is already set)
-      if (this._spinning) {
+      if (this._executingSpin) {
         //this.StopSpinning();
       } else {
-        this._spinning = true;
+        this._executingSpin = true;
+        this._reelsSpinning = false;
 
         // Verify if the user has enough credits to play
         if (valMng.Credits < valMng.TotalBet) {
-          this._spinning = false;
+          this._executingSpin = false;
           return false;
         }
 
@@ -231,7 +253,7 @@ module managers {
         this._betResult = this.GetReelsResult();
 
         // Start spining
-        //this.StartSpinning();
+        this.StartSpinning();
 
         // Determine Winnings
         this.DetermineWinnings();
@@ -239,7 +261,7 @@ module managers {
         console.log("Winnings: " + this._winnings);
         console.log("Lines: " + this._winningLines);
 
-        this._spinning = false;
+        //this._executingSpin = false;
       }
     }
   }

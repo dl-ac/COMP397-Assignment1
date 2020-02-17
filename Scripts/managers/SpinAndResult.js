@@ -5,8 +5,8 @@ var managers;
         // CONSTRUCTOR
         function SpinAndResult() {
             // PRIVATE CONSTANTS
-            this.reelCt = 5;
-            this.linesCt = 3;
+            this._reelCt = 5;
+            this._linesCt = 3;
             this.Start();
         }
         // PRIVATE METHODS
@@ -18,7 +18,7 @@ var managers;
          * @memberof SpinAndResult
          */
         SpinAndResult.prototype.GetReelsResult = function () {
-            var figCt = this.reelCt * this.linesCt;
+            var figCt = this._reelCt * this._linesCt;
             var result = new Array(figCt);
             for (var iCt = 0; iCt < figCt; iCt++) {
                 var outcome = Math.floor(Math.random() * 65 + 1);
@@ -100,15 +100,15 @@ var managers;
                 // First and second are different, no winnings.
                 winnings = 0;
             }
-            else if (this._betResult[lineIds[0]] != this._betResult[lineIds[3]]) {
+            else if (this._betResult[lineIds[0]] != this._betResult[lineIds[2]]) {
                 // First and third are different, check for winnings for 2 equals figure
                 winnings = this.GetFigureMutiplier(this._betResult[lineIds[0]], 2) * betValue;
             }
-            else if (this._betResult[lineIds[0]] != this._betResult[lineIds[4]]) {
+            else if (this._betResult[lineIds[0]] != this._betResult[lineIds[3]]) {
                 // First and fourth are different, check for winning for 3 equals figure
                 winnings = this.GetFigureMutiplier(this._betResult[lineIds[0]], 3) * betValue;
             }
-            else if (this._betResult[lineIds[0]] != this._betResult[lineIds[5]]) {
+            else if (this._betResult[lineIds[0]] != this._betResult[lineIds[4]]) {
                 // First and fifth are different, check for winning for 4 equals figure
                 winnings = this.GetFigureMutiplier(this._betResult[lineIds[0]], 4) * betValue;
             }
@@ -139,37 +139,54 @@ var managers;
             // If not found, return 0
             return 0;
         };
+        SpinAndResult.prototype.StartSpinning = function () {
+            this._reels[0].StartSpin([objects.ReelFigures.AERIS, objects.ReelFigures.CLOUD, objects.ReelFigures.SEPHIROTH]);
+            this._reelsSpinning = true;
+        };
         // PUBLIC METHODS
         // Initialize local objects
         SpinAndResult.prototype.Start = function () {
-            this._reel1 = new objects.Button("emptyReel", 50, 140);
-            this._reel2 = new objects.Button("emptyReel", 200, 140);
-            this._reel3 = new objects.Button("emptyReel", 350, 140);
-            this._reel4 = new objects.Button("emptyReel", 500, 140);
-            this._reel5 = new objects.Button("emptyReel", 650, 140);
-            this._spinning = false;
+            var pos = 50;
+            var initialReels = this.GetReelsResult();
+            var initialPerReel = [
+                [initialReels[0], initialReels[5], initialReels[10]],
+                [initialReels[1], initialReels[6], initialReels[11]],
+                [initialReels[2], initialReels[7], initialReels[12]],
+                [initialReels[3], initialReels[8], initialReels[13]],
+                [initialReels[4], initialReels[9], initialReels[14]]
+            ];
+            this._reels = new Array(this._reelCt);
+            for (var iCt = 0; iCt < this._reelCt; iCt++) {
+                this._reels[iCt] = new objects.Reel(initialPerReel[iCt], pos);
+                pos += 150;
+            }
+            this._executingSpin = false;
             this._betResult = [];
         };
-        SpinAndResult.prototype.Update = function () { };
+        SpinAndResult.prototype.Update = function () {
+            if (this._executingSpin && this._reelsSpinning) {
+                this._reels[0].Update();
+            }
+        };
         // Add objects to a scene
         SpinAndResult.prototype.AddObjectsToScene = function (scene) {
-            scene.addChild(this._reel1);
-            scene.addChild(this._reel2);
-            scene.addChild(this._reel3);
-            scene.addChild(this._reel4);
-            scene.addChild(this._reel5);
+            for (var iCt = 0; iCt < this._reelCt; iCt++) {
+                scene.addChild(this._reels[iCt]);
+                this._reels[iCt].AddObjectsToScene(scene); // Add the extra objects to the scene
+            }
         };
         SpinAndResult.prototype.SpinAndStop = function () {
             var valMng = config.Game.VALUE_MANAGER;
             // Verify if there is a spin executing, if so, will stop the reels (only in the UI, the results is already set)
-            if (this._spinning) {
+            if (this._executingSpin) {
                 //this.StopSpinning();
             }
             else {
-                this._spinning = true;
+                this._executingSpin = true;
+                this._reelsSpinning = false;
                 // Verify if the user has enough credits to play
                 if (valMng.Credits < valMng.TotalBet) {
-                    this._spinning = false;
+                    this._executingSpin = false;
                     return false;
                 }
                 // Subtract the value from the credits
@@ -177,12 +194,12 @@ var managers;
                 // Get the results
                 this._betResult = this.GetReelsResult();
                 // Start spining
-                //this.StartSpinning();
+                this.StartSpinning();
                 // Determine Winnings
                 this.DetermineWinnings();
                 console.log("Winnings: " + this._winnings);
                 console.log("Lines: " + this._winningLines);
-                this._spinning = false;
+                //this._executingSpin = false;
             }
         };
         // CONSTANTS

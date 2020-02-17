@@ -55,11 +55,17 @@ module scenes {
 
       this.Main();
     }
-    public Update(): void {}
+
+    public Update(): void {
+      config.Game.SPIN_RESULT_MANAGER.Update();
+    }
 
     public Main(): void {
-      this.addChild(this._background);
+      // The Reels must be added behind the background to hide the objects.
       config.Game.SPIN_RESULT_MANAGER.AddObjectsToScene(this);
+
+      // Add the background
+      this.addChild(this._background);
 
       // Add the buttons to the stage
       this.addChild(this._spinButton);

@@ -32,7 +32,18 @@ let Game = (function() {
     { id: "fiveCAD", src: "./Assets/images/5CAD.png" },
     { id: "twentyCAD", src: "./Assets/images/20CAD.png" },
     { id: "hundredCAD", src: "./Assets/images/100CAD.png" },
-    { id: "emptyReel", src: "./Assets/images/emptyReel.png" }
+    { id: "emptyReel", src: "./Assets/images/emptyReel.png" },
+    { id: "reelFigures", src: "./Assets/images/FullReel.png" },
+    { id: "Aeris", src: "./Assets/images/Aeris.png" },
+    { id: "Barret", src: "./Assets/images/Barret.png" },
+    { id: "Cid", src: "./Assets/images/Cid.png" },
+    { id: "Cloud", src: "./Assets/images/Cloud.png" },
+    { id: "RedXIII", src: "./Assets/images/RedXIII.png" },
+    { id: "Sephiroth", src: "./Assets/images/Sephiroth.png" },
+    { id: "Tifa", src: "./Assets/images/Tifa.png" },
+    { id: "Vincent", src: "./Assets/images/Vincent.png" },
+    { id: "Yuffie", src: "./Assets/images/Yuffie.png" },
+    { id: "blankReel", src: "./Assets/images/BlankReel.png" }
   ];
 
   function Preload(): void {
@@ -50,6 +61,12 @@ let Game = (function() {
   function Start(): void {
     console.log(`%c Game Started!`, "color: blue; font-size: 20px; font-weight: bold;");
     stage = new createjs.Stage(canvas);
+
+    // Create the managers
+    config.Game.VALUE_MANAGER = new managers.InternalValues();
+    config.Game.SPIN_RESULT_MANAGER = new managers.SpinAndResult();
+
+    // Set the ticker
     createjs.Ticker.framerate = config.Game.FPS;
     createjs.Ticker.on("tick", Update);
     stage.enableMouseOver(20);
@@ -58,9 +75,6 @@ let Game = (function() {
     config.Game.SCENE = scenes.State.PLAY;
     config.Game.SCREEN_WIDTH = canvas.width;
     config.Game.SCREEN_HEIGHT = canvas.height;
-
-    config.Game.VALUE_MANAGER = new managers.InternalValues();
-    config.Game.SPIN_RESULT_MANAGER = new managers.SpinAndResult();
   }
 
   /**

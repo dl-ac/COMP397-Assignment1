@@ -48,10 +48,14 @@ var scenes;
             this._linesButton.on("click", this.LinesClick);
             this.Main();
         };
-        Play.prototype.Update = function () { };
+        Play.prototype.Update = function () {
+            config.Game.SPIN_RESULT_MANAGER.Update();
+        };
         Play.prototype.Main = function () {
-            this.addChild(this._background);
+            // The Reels must be added behind the background to hide the objects.
             config.Game.SPIN_RESULT_MANAGER.AddObjectsToScene(this);
+            // Add the background
+            this.addChild(this._background);
             // Add the buttons to the stage
             this.addChild(this._spinButton);
             this.addChild(this._twoDollarButton);
