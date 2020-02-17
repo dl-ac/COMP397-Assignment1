@@ -1,13 +1,12 @@
 module objects {
   export class SingleReel extends objects.GameObject {
     // CONSTANTS
-    public static SINGLE_REEL_SPEED = 5; // 5px per Frame
+    public static SINGLE_REEL_SPEED = 10; // 8px per Frame
 
     // PRIVATE INSTANCE MEMBERS
     private _screenPosition: Vector2;
     private _belowPosition: Vector2;
     private _abovePosition: Vector2;
-    private _newImage: string;
 
     // PROPERTIES
     get isMoving(): boolean {
@@ -29,7 +28,6 @@ module objects {
       if (this.y >= this._belowPosition.y) {
         this.velocity = new Vector2(0, 0);
         this.position = this._abovePosition;
-        this.image = config.Game.ASSETS.getResult(this._newImage) as any;
       }
 
       // If the spin reach their original position, stop spinning
@@ -55,8 +53,10 @@ module objects {
       this.position = this._screenPosition;
     }
 
-    public StartMovement(newImage: string): void {
-      this._newImage = newImage;
+    public StartMovement(newImage: string = undefined): void {
+      if (newImage != undefined) {
+        this.image = config.Game.ASSETS.getResult(newImage) as any;
+      }
       this.velocity = this.velocity = new Vector2(0, SingleReel.SINGLE_REEL_SPEED);
     }
   }

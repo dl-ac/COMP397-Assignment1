@@ -13,6 +13,10 @@ module managers {
       { id: objects.ReelFigures.SEPHIROTH, multipliers: [10, 100, 1000, 5000] }
     ];
 
+    // SPINNING TIMES
+    private static FIRST_REEL_SPIN_TIME = 3;
+    private static OTHER_REEL_SPIN_TIME = 1;
+
     // Jackpot value - Max multiplier times the max bet
     private static JACKPOT_VALUE = 5000 * InternalValues.BET_BASE_VALUES[InternalValues.BET_BASE_VALUES.length - 1];
 
@@ -22,17 +26,21 @@ module managers {
 
     // PRIVATE INSTANCE VARIABLES
     private _reels: objects.Reel[];
-    private _reel1: objects.Button;
-    private _reel2: objects.Button;
-    private _reel3: objects.Button;
-    private _reel4: objects.Button;
-    private _reel5: objects.Button;
-    private _executingSpin: boolean;
+
     private _betResult: objects.ReelFigures[];
+    private _betResultPerReel: objects.ReelFigures[][];
     private _winnings: number;
     private _winningLines: number[];
     private _isJackpot: boolean;
-    private _reelsSpinning: boolean;
+
+    private _countTicks: number;
+    private _stopIn: number;
+    private _state: objects.SpinState;
+
+    // PROPERTIES
+    get isSpinning(): boolean {
+      return this._state != objects.SpinState.IDLE && this._state != objects.SpinState.DISPLAY_LINES;
+    }
 
     // CONSTRUCTOR
     constructor() {
@@ -93,6 +101,8 @@ module managers {
             break;
         }
       }
+
+      console.log("Results: " + result);
 
       return result;
     }
@@ -188,9 +198,37 @@ module managers {
     }
 
     private StartSpinning(): void {
-      this._reels[0].StartSpin([objects.ReelFigures.AERIS, objects.ReelFigures.CLOUD, objects.ReelFigures.SEPHIROTH]);
-      this._reelsSpinning = true;
+      for (let iCt = 0; iCt < this._reelCt; iCt++) {
+        this._reels[iCt].StartSpin();
+      }
+
+      this._state = objects.SpinState.SPINNING;
+      this._countTicks = 0;
+      this._stopIn = config.Game.FPS * SpinAndResult.FIRST_REEL_SPIN_TIME;
     }
+
+    private StopSpinning(): void {
+      if (this._state == objects.SpinState.SPINNING) {
+        let iCt = 0;
+        // Check which spin to stop
+        for (; iCt < this._reelCt; iCt++) {
+          if (this._reels[iCt].isActive) {
+            this._reels[iCt].StopSpin(this._betResultPerReel[iCt]);
+            break;
+          }
+        }
+
+        // If is the last one to stop change the status to Waiting Results (Waiting all spins to stop)
+        if (iCt >= this._reelCt - 1) {
+          this._state = objects.SpinState.WAITING_RESULTS;
+        }
+
+        this._countTicks = 0;
+        this._stopIn = config.Game.FPS * SpinAndResult.OTHER_REEL_SPIN_TIME;
+      }
+    }
+
+    private ResetLines(): void {}
 
     // PUBLIC METHODS
     // Initialize local objects
@@ -212,13 +250,52 @@ module managers {
         pos += 150;
       }
 
-      this._executingSpin = false;
       this._betResult = [];
+      this._countTicks = 0;
+      this._state = objects.SpinState.IDLE;
     }
 
     public Update(): void {
-      if (this._executingSpin && this._reelsSpinning) {
-        this._reels[0].Update();
+      switch (this._state) {
+        case objects.SpinState.WAITING_RESULTS:
+          let allStopped = true;
+
+          // Update all the spinnings, and check the status of each one
+          for (let iCt = 0; iCt < this._reelCt; iCt++) {
+            this._reels[iCt].Update();
+            allStopped = allStopped && this._reels[iCt].State == objects.ReelState.STOPPED;
+          }
+
+          if (allStopped) {
+            this._state = objects.SpinState.PROCESS_RESULTS;
+          }
+          break;
+
+        case objects.SpinState.SPINNING:
+          this._countTicks++;
+
+          // Update all the spinnings, and check the status of each one
+          for (let iCt = 0; iCt < this._reelCt; iCt++) {
+            this._reels[iCt].Update();
+            allStopped = allStopped && this._reels[iCt].State == objects.ReelState.STOPPED;
+
+            if (this._countTicks > this._stopIn && this._reels[iCt].isActive) {
+              this.StopSpinning();
+            }
+          }
+          break;
+
+        case objects.SpinState.PROCESS_RESULTS:
+          if (this._winnings > 0) {
+            config.Game.VALUE_MANAGER.AddCredits(this._winnings);
+            this._state = objects.SpinState.DISPLAY_LINES;
+          } else {
+            this._state = objects.SpinState.IDLE;
+          }
+
+          break;
+
+        case objects.SpinState.DISPLAY_LINES:
       }
     }
 
@@ -234,15 +311,20 @@ module managers {
       let valMng: managers.InternalValues = config.Game.VALUE_MANAGER;
 
       // Verify if there is a spin executing, if so, will stop the reels (only in the UI, the results is already set)
-      if (this._executingSpin) {
-        //this.StopSpinning();
+      if (this.isSpinning) {
+        this.StopSpinning();
       } else {
-        this._executingSpin = true;
-        this._reelsSpinning = false;
+        // Display winning lines allows to start a new spin, so if this is the current state, reset it
+        if (this._state == objects.SpinState.DISPLAY_LINES) {
+          this.ResetLines();
+        }
+
+        // Set the current status
+        this._state = objects.SpinState.REQUEST_SPIN;
 
         // Verify if the user has enough credits to play
         if (valMng.Credits < valMng.TotalBet) {
-          this._executingSpin = false;
+          this._state = objects.SpinState.IDLE;
           return false;
         }
 
@@ -251,6 +333,13 @@ module managers {
 
         // Get the results
         this._betResult = this.GetReelsResult();
+        this._betResultPerReel = [
+          [this._betResult[0], this._betResult[5], this._betResult[10]],
+          [this._betResult[1], this._betResult[6], this._betResult[11]],
+          [this._betResult[2], this._betResult[7], this._betResult[12]],
+          [this._betResult[3], this._betResult[8], this._betResult[13]],
+          [this._betResult[4], this._betResult[9], this._betResult[14]]
+        ];
 
         // Start spining
         this.StartSpinning();

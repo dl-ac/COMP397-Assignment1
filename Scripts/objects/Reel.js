@@ -24,10 +24,17 @@ var objects;
             _this.Start();
             return _this;
         }
-        Object.defineProperty(Reel.prototype, "isMoving", {
+        Object.defineProperty(Reel.prototype, "isActive", {
             // PROPERTIES
             get: function () {
-                return this.velocity.y != 0;
+                return this._state == objects.ReelState.STARTING || this._state == objects.ReelState.SPINNING;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Reel.prototype, "State", {
+            get: function () {
+                return this._state;
             },
             enumerable: true,
             configurable: true
@@ -35,12 +42,11 @@ var objects;
         // PRIVATE METHODS
         Reel.prototype._checkBounds = function () {
             if (this.y >= Reel.POS_Y) {
-                this.Reset();
+                this.position = new objects.Vector2(this.x, Reel.POS_Y - this.height + Reel.TOTAL_SCREEN_HEIGHT - Reel.SEPARATOR_HEIGHT);
             }
         };
         Reel.prototype.ConvertFigureToAssetId = function (value) {
             var assetId = "Blank";
-            objects.ReelFigures.RED_XIII.toString().toLowerCase;
             switch (value) {
                 case objects.ReelFigures.RED_XIII:
                     assetId = "RedXIII";
@@ -62,6 +68,7 @@ var objects;
                     break;
                 case objects.ReelFigures.AERIS:
                     assetId = "Aeris";
+                    break;
                 case objects.ReelFigures.CLOUD:
                     assetId = "Cloud";
                     break;
@@ -90,6 +97,16 @@ var objects;
         Reel.prototype.Update = function () {
             // Only move if there is enable to move
             if (this._state != objects.ReelState.STOPPED) {
+                if (this._state == objects.ReelState.ALIGN_TO_STOP) {
+                    // Verify first position available
+                    var alignPos = this.position.y + (Reel.POS_Y - Reel.SINGLE_REEL_SEPARATOR_HEIGHT);
+                    if (alignPos % Reel.SINGLE_REEL_SEPARATOR_HEIGHT == 0) {
+                        this._line1.StartMovement(this.ConvertFigureToAssetId(this._figures[0]));
+                        this._line2.StartMovement(this.ConvertFigureToAssetId(this._figures[1]));
+                        this._line3.StartMovement(this.ConvertFigureToAssetId(this._figures[2]));
+                        this._state = objects.ReelState.STOPPING;
+                    }
+                }
                 // Check if the single reels is moving
                 if (this._line1.isMoving || this._line2.isMoving || this._line3.isMoving) {
                     this._line1.Update();
@@ -105,12 +122,17 @@ var objects;
                             this._state = objects.ReelState.SPINNING;
                         }
                     }
-                    else if (this._state == objects.ReelState.STOPPING) {
+                    else if (this._state == objects.ReelState.BEGIN_STOP) {
                         this.velocity.y -= Reel.SPEED_STEP_PER_TICK;
                         if (this.velocity.y <= objects.SingleReel.SINGLE_REEL_SPEED) {
                             this.velocity.y = objects.SingleReel.SINGLE_REEL_SPEED;
-                            this._state = objects.ReelState.READY_TO_STOP;
+                            this._state = objects.ReelState.ALIGN_TO_STOP;
                         }
+                    }
+                    else if (this._state == objects.ReelState.STOPPING) {
+                        this._state = objects.ReelState.STOPPED;
+                        this.Reset();
+                        return;
                     }
                 }
                 this._move();
@@ -118,28 +140,34 @@ var objects;
             }
         };
         Reel.prototype.Reset = function () {
-            this.position = new objects.Vector2(this.x, Reel.POS_Y - this.height + Reel.TOTAL_SCREEN_HEIGHT - Reel.SEPARATOR_HEIGHT);
+            var defPos = Reel.POS_Y - this.height + Reel.TOTAL_SCREEN_HEIGHT - Reel.SEPARATOR_HEIGHT;
+            var randomPos = (Reel.SEPARATOR_HEIGHT + Reel.SINGLE_REEL_HEIGHT) * Math.floor(Math.random() * 4 + 1);
+            this.position = new objects.Vector2(this.x, defPos + randomPos);
         };
         Reel.prototype.AddObjectsToScene = function (scene) {
             scene.addChild(this._line1);
             scene.addChild(this._line2);
             scene.addChild(this._line3);
         };
-        Reel.prototype.StartSpin = function (result) {
-            this._figures = result;
+        Reel.prototype.StartSpin = function () {
             this.velocity = new objects.Vector2(0, objects.SingleReel.SINGLE_REEL_SPEED);
             this._state = objects.ReelState.STARTING;
-            this._line1.StartMovement(this.ConvertFigureToAssetId(result[0]));
-            this._line2.StartMovement(this.ConvertFigureToAssetId(result[1]));
-            this._line3.StartMovement(this.ConvertFigureToAssetId(result[2]));
+            this._line1.StartMovement();
+            this._line2.StartMovement();
+            this._line3.StartMovement();
+        };
+        Reel.prototype.StopSpin = function (result) {
+            this._figures = result;
+            this._state = objects.ReelState.BEGIN_STOP;
         };
         // CONSTANTS
         Reel.POS_Y = 140;
         Reel.TOTAL_SCREEN_HEIGHT = 280;
         Reel.SEPARATOR_HEIGHT = 10;
         Reel.SINGLE_REEL_HEIGHT = 80;
-        Reel.SPEED_STEP_PER_TICK = 0.2;
-        Reel.MAX_REEL_SPEED = 30;
+        Reel.SINGLE_REEL_SEPARATOR_HEIGHT = Reel.SINGLE_REEL_HEIGHT + Reel.SEPARATOR_HEIGHT;
+        Reel.SPEED_STEP_PER_TICK = 2;
+        Reel.MAX_REEL_SPEED = 40;
         return Reel;
     }(objects.GameObject));
     objects.Reel = Reel;

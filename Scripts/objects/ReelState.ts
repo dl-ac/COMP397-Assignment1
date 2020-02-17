@@ -3,8 +3,9 @@ module objects {
     STOPPED,
     STARTING,
     SPINNING,
+    BEGIN_STOP,
+    ALIGN_TO_STOP,
     STOPPING,
-    READY_TO_STOP,
     NUM_OF_STATES
   }
 }

@@ -94,6 +94,10 @@ var managers;
          */
         InternalValues.prototype.BetOne = function () {
             var nextBetId = this._betId + 1;
+            // Do not pertmit to change the bet/lines while spinning
+            if (config.Game.SPIN_RESULT_MANAGER.isSpinning) {
+                return false;
+            }
             if (nextBetId >= InternalValues.BET_BASE_VALUES.length) {
                 nextBetId = 0;
             }
@@ -106,6 +110,10 @@ var managers;
          * @memberof InternalValues
          */
         InternalValues.prototype.BetMax = function () {
+            // Do not pertmit to change the bet/lines while spinning
+            if (config.Game.SPIN_RESULT_MANAGER.isSpinning) {
+                return false;
+            }
             for (var iLn = this._linesId; iLn >= 0; iLn--) {
                 for (var iCt = InternalValues.BET_BASE_VALUES.length - 1; iCt >= 0; iCt--) {
                     if (this.VerifyAndSetNewBetOrLine(iCt, iLn)) {
@@ -123,6 +131,10 @@ var managers;
          */
         InternalValues.prototype.PayLines = function () {
             var nextLineId = this._linesId + 1;
+            // Do not pertmit to change the bet/lines while spinning
+            if (config.Game.SPIN_RESULT_MANAGER.isSpinning) {
+                return false;
+            }
             if (nextLineId >= InternalValues.LINES_BASE_VALUES.length) {
                 nextLineId = 0;
             }
@@ -164,8 +176,8 @@ var managers;
         // Array containing the 10 paylines, line one [0-4], line two [5-9] and line three [10-14]
         // It should be in order of the pay, so the first one will be the middle of the screen (line two), and so on
         InternalValues.PAY_LINES_POSITIONS = [
-            [0, 1, 2, 3, 4],
             [5, 6, 7, 8, 9],
+            [0, 1, 2, 3, 4],
             [10, 11, 12, 13, 14],
             [0, 6, 12, 8, 4],
             [10, 6, 2, 8, 14],

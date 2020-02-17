@@ -5,19 +5,25 @@ module objects {
     public static TOTAL_SCREEN_HEIGHT = 280;
     public static SEPARATOR_HEIGHT = 10;
     public static SINGLE_REEL_HEIGHT = 80;
-    public static SPEED_STEP_PER_TICK = 0.2;
-    public static MAX_REEL_SPEED = 30;
+    public static SINGLE_REEL_SEPARATOR_HEIGHT = Reel.SINGLE_REEL_HEIGHT + Reel.SEPARATOR_HEIGHT;
+    public static SPEED_STEP_PER_TICK = 2;
+    public static MAX_REEL_SPEED = 40;
 
     // PRIVATE INSTANCE VARIABLES
     private _line1: objects.SingleReel;
     private _line2: objects.SingleReel;
     private _line3: objects.SingleReel;
+
     private _figures: objects.ReelFigures[];
     private _state: objects.ReelState;
 
     // PROPERTIES
-    get isMoving(): boolean {
-      return this.velocity.y != 0;
+    get isActive(): boolean {
+      return this._state == ReelState.STARTING || this._state == ReelState.SPINNING;
+    }
+
+    get State(): objects.ReelState {
+      return this._state;
     }
 
     // CONSTRUCTOR
@@ -31,14 +37,15 @@ module objects {
     // PRIVATE METHODS
     protected _checkBounds(): void {
       if (this.y >= Reel.POS_Y) {
-        this.Reset();
+        this.position = new Vector2(
+          this.x,
+          Reel.POS_Y - this.height + Reel.TOTAL_SCREEN_HEIGHT - Reel.SEPARATOR_HEIGHT
+        );
       }
     }
 
     private ConvertFigureToAssetId(value: objects.ReelFigures): string {
       let assetId: string = "Blank";
-
-      objects.ReelFigures.RED_XIII.toString().toLowerCase;
 
       switch (value) {
         case objects.ReelFigures.RED_XIII:
@@ -67,6 +74,7 @@ module objects {
 
         case objects.ReelFigures.AERIS:
           assetId = "Aeris";
+          break;
 
         case objects.ReelFigures.CLOUD:
           assetId = "Cloud";
@@ -117,6 +125,18 @@ module objects {
     public Update(): void {
       // Only move if there is enable to move
       if (this._state != ReelState.STOPPED) {
+        if (this._state == ReelState.ALIGN_TO_STOP) {
+          // Verify first position available
+          let alignPos = this.position.y + (Reel.POS_Y - Reel.SINGLE_REEL_SEPARATOR_HEIGHT);
+
+          if (alignPos % Reel.SINGLE_REEL_SEPARATOR_HEIGHT == 0) {
+            this._line1.StartMovement(this.ConvertFigureToAssetId(this._figures[0]));
+            this._line2.StartMovement(this.ConvertFigureToAssetId(this._figures[1]));
+            this._line3.StartMovement(this.ConvertFigureToAssetId(this._figures[2]));
+            this._state = ReelState.STOPPING;
+          }
+        }
+
         // Check if the single reels is moving
         if (this._line1.isMoving || this._line2.isMoving || this._line3.isMoving) {
           this._line1.Update();
@@ -130,12 +150,16 @@ module objects {
               this.velocity.y = Reel.MAX_REEL_SPEED;
               this._state = ReelState.SPINNING;
             }
-          } else if (this._state == ReelState.STOPPING) {
+          } else if (this._state == ReelState.BEGIN_STOP) {
             this.velocity.y -= Reel.SPEED_STEP_PER_TICK;
             if (this.velocity.y <= SingleReel.SINGLE_REEL_SPEED) {
               this.velocity.y = SingleReel.SINGLE_REEL_SPEED;
-              this._state = ReelState.READY_TO_STOP;
+              this._state = ReelState.ALIGN_TO_STOP;
             }
+          } else if (this._state == ReelState.STOPPING) {
+            this._state = ReelState.STOPPED;
+            this.Reset();
+            return;
           }
         }
 
@@ -145,7 +169,9 @@ module objects {
     }
 
     public Reset(): void {
-      this.position = new Vector2(this.x, Reel.POS_Y - this.height + Reel.TOTAL_SCREEN_HEIGHT - Reel.SEPARATOR_HEIGHT);
+      let defPos = Reel.POS_Y - this.height + Reel.TOTAL_SCREEN_HEIGHT - Reel.SEPARATOR_HEIGHT;
+      let randomPos = (Reel.SEPARATOR_HEIGHT + Reel.SINGLE_REEL_HEIGHT) * Math.floor(Math.random() * 4 + 1);
+      this.position = new Vector2(this.x, defPos + randomPos);
     }
 
     public AddObjectsToScene(scene: objects.Scene): void {
@@ -154,14 +180,17 @@ module objects {
       scene.addChild(this._line3);
     }
 
-    public StartSpin(result: objects.ReelFigures[]): void {
-      this._figures = result;
-
+    public StartSpin(): void {
       this.velocity = new Vector2(0, SingleReel.SINGLE_REEL_SPEED);
       this._state = ReelState.STARTING;
-      this._line1.StartMovement(this.ConvertFigureToAssetId(result[0]));
-      this._line2.StartMovement(this.ConvertFigureToAssetId(result[1]));
-      this._line3.StartMovement(this.ConvertFigureToAssetId(result[2]));
+      this._line1.StartMovement();
+      this._line2.StartMovement();
+      this._line3.StartMovement();
+    }
+
+    public StopSpin(result: objects.ReelFigures[]): void {
+      this._figures = result;
+      this._state = ReelState.BEGIN_STOP;
     }
   }
 }

@@ -41,7 +41,6 @@ var objects;
             if (this.y >= this._belowPosition.y) {
                 this.velocity = new objects.Vector2(0, 0);
                 this.position = this._abovePosition;
-                this.image = config.Game.ASSETS.getResult(this._newImage);
             }
             // If the spin reach their original position, stop spinning
             if (this.y == this._screenPosition.y) {
@@ -62,11 +61,14 @@ var objects;
             this.position = this._screenPosition;
         };
         SingleReel.prototype.StartMovement = function (newImage) {
-            this._newImage = newImage;
+            if (newImage === void 0) { newImage = undefined; }
+            if (newImage != undefined) {
+                this.image = config.Game.ASSETS.getResult(newImage);
+            }
             this.velocity = this.velocity = new objects.Vector2(0, SingleReel.SINGLE_REEL_SPEED);
         };
         // CONSTANTS
-        SingleReel.SINGLE_REEL_SPEED = 5; // 5px per Frame
+        SingleReel.SINGLE_REEL_SPEED = 10; // 8px per Frame
         return SingleReel;
     }(objects.GameObject));
     objects.SingleReel = SingleReel;
