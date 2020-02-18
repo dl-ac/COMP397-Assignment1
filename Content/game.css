@@ -20,3 +20,10 @@ body {
     font-weight: normal;
     src: url(../Assets/fonts/digital7_mono.ttf) format('truetype');
 }
+
+@font-face {
+    font-family: 'FinalFantasy';
+    font-style: normal;
+    font-weight: normal;
+    src: url(../Assets/fonts/finalf.ttf) format('truetype');
+}

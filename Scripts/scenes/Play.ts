@@ -16,6 +16,9 @@ module scenes {
     private _resetButton: objects.Button;
     private _hackButton: objects.Button;
 
+    // Title label
+    private _titleLabel: objects.Label;
+
     // PUBLIC PROPERTIES
 
     // CONSTRUCTOR
@@ -51,6 +54,17 @@ module scenes {
         "emptyButton",
         config.Game.SCREEN_WIDTH - 60,
         config.Game.SCREEN_HEIGHT - 60,
+        false
+      );
+
+      // Create labels
+      this._titleLabel = new objects.Label(
+        "SLOT MACHINE",
+        "bold 16px",
+        "Stint Ultra Condensed",
+        "#000",
+        605,
+        570,
         false
       );
 
@@ -96,6 +110,10 @@ module scenes {
       this.addChild(this._quitButton);
       this.addChild(this._resetButton);
 
+      // Add the label to stage
+      this.addChild(this._titleLabel);
+
+      // Add the value manager controls to the stage
       config.Game.VALUE_MANAGER.AddObjectsToScene(this);
     }
 
@@ -142,7 +160,9 @@ module scenes {
     }
 
     private ResetClick(): void {
-      config.Game.VALUE_MANAGER.Reset();
+      if (!config.Game.SPIN_RESULT_MANAGER.isSpinning) {
+        config.Game.VALUE_MANAGER.Reset();
+      }
     }
 
     private QuitClick(): void {

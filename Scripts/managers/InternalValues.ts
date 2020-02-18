@@ -156,6 +156,7 @@ module managers {
      * @memberof InternalValues
      */
     public BetOne(): boolean {
+      let result = false;
       let nextBetId: number = this._betId + 1;
 
       // Do not pertmit to change the bet/lines while spinning
@@ -167,7 +168,15 @@ module managers {
         nextBetId = 0;
       }
 
-      return this.VerifyAndSetNewBetOrLine(nextBetId, this._linesId);
+      // Get the result
+      result = this.VerifyAndSetNewBetOrLine(nextBetId, this._linesId);
+
+      // If not able to switch to next bet, try the lowest one
+      if (!result) {
+        result = this.VerifyAndSetNewBetOrLine(0, this._linesId);
+      }
+
+      return result;
     }
 
     /**
@@ -201,6 +210,7 @@ module managers {
      */
     public PayLines(): boolean {
       let nextLineId: number = this._linesId + 1;
+      let result = false;
 
       // Do not pertmit to change the bet/lines while spinning
       if (config.Game.SPIN_RESULT_MANAGER.isSpinning) {
@@ -211,7 +221,15 @@ module managers {
         nextLineId = 0;
       }
 
-      return this.VerifyAndSetNewBetOrLine(this._betId, nextLineId);
+      // Get the result
+      result = this.VerifyAndSetNewBetOrLine(this._betId, nextLineId);
+
+      // If not able to switch to next bet, try the lowest one
+      if (!result) {
+        result = this.VerifyAndSetNewBetOrLine(this._betId, 0);
+      }
+
+      return result;
     }
 
     /**

@@ -110,7 +110,6 @@ let Game = (function() {
 
     switch (config.Game.SCENE) {
       case scenes.State.PLAY:
-        console.log("switch to Play Scene");
         currentScene = new scenes.Play();
         break;
 

@@ -40,6 +40,8 @@ var scenes;
             this._quitButton = new objects.Button("quitButton", config.Game.SCREEN_WIDTH - 65, 5, false);
             this._resetButton = new objects.Button("resetButton", config.Game.SCREEN_WIDTH - 65, 70, false);
             this._hackButton = new objects.Button("emptyButton", config.Game.SCREEN_WIDTH - 60, config.Game.SCREEN_HEIGHT - 60, false);
+            // Create labels
+            this._titleLabel = new objects.Label("SLOT MACHINE", "bold 16px", "Stint Ultra Condensed", "#000", 605, 570, false);
             // Add buttons events
             this._spinButton.on("click", this.SpinClick);
             this._twoDollarButton.on("click", this.AddCreditClick);
@@ -74,6 +76,9 @@ var scenes;
             this.addChild(this._linesButton);
             this.addChild(this._quitButton);
             this.addChild(this._resetButton);
+            // Add the label to stage
+            this.addChild(this._titleLabel);
+            // Add the value manager controls to the stage
             config.Game.VALUE_MANAGER.AddObjectsToScene(this);
         };
         // PRIVATE INTERNAL METHODS
@@ -112,7 +117,9 @@ var scenes;
             config.Game.SPIN_RESULT_MANAGER.ForceJackpot();
         };
         Play.prototype.ResetClick = function () {
-            config.Game.VALUE_MANAGER.Reset();
+            if (!config.Game.SPIN_RESULT_MANAGER.isSpinning) {
+                config.Game.VALUE_MANAGER.Reset();
+            }
         };
         Play.prototype.QuitClick = function () {
             config.Game.SCENE = scenes.State.END;

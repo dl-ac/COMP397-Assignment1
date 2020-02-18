@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "COMP-397 - Assignment 1 - Slot Machine - Final Fantasy VII",
   "main": "game.js",
-  "author": "Ailton De Lima",
+  "author": "Ailton De Lima (301018951)",
   "license": "MIT",
   "dependencies": {
     "createjs": "^1.0.1",

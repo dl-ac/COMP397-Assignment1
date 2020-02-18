@@ -128,6 +128,7 @@ var managers;
          * @memberof InternalValues
          */
         InternalValues.prototype.BetOne = function () {
+            var result = false;
             var nextBetId = this._betId + 1;
             // Do not pertmit to change the bet/lines while spinning
             if (config.Game.SPIN_RESULT_MANAGER.isSpinning) {
@@ -136,7 +137,13 @@ var managers;
             if (nextBetId >= InternalValues.BET_BASE_VALUES.length) {
                 nextBetId = 0;
             }
-            return this.VerifyAndSetNewBetOrLine(nextBetId, this._linesId);
+            // Get the result
+            result = this.VerifyAndSetNewBetOrLine(nextBetId, this._linesId);
+            // If not able to switch to next bet, try the lowest one
+            if (!result) {
+                result = this.VerifyAndSetNewBetOrLine(0, this._linesId);
+            }
+            return result;
         };
         /**
          * Update the Bet Max value, deterime the max value based
@@ -166,6 +173,7 @@ var managers;
          */
         InternalValues.prototype.PayLines = function () {
             var nextLineId = this._linesId + 1;
+            var result = false;
             // Do not pertmit to change the bet/lines while spinning
             if (config.Game.SPIN_RESULT_MANAGER.isSpinning) {
                 return false;
@@ -173,7 +181,13 @@ var managers;
             if (nextLineId >= InternalValues.LINES_BASE_VALUES.length) {
                 nextLineId = 0;
             }
-            return this.VerifyAndSetNewBetOrLine(this._betId, nextLineId);
+            // Get the result
+            result = this.VerifyAndSetNewBetOrLine(this._betId, nextLineId);
+            // If not able to switch to next bet, try the lowest one
+            if (!result) {
+                result = this.VerifyAndSetNewBetOrLine(this._betId, 0);
+            }
+            return result;
         };
         /**
          * Add credits to play, set to max value if exceed the limits

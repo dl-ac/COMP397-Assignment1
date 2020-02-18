@@ -16,20 +16,25 @@ var scenes;
 (function (scenes) {
     var EndGame = /** @class */ (function (_super) {
         __extends(EndGame, _super);
+        // CONSTRUCTOR
         function EndGame() {
-            return _super !== null && _super.apply(this, arguments) || this;
+            var _this = _super.call(this) || this;
+            _this.Start();
+            return _this;
         }
         EndGame.prototype.Start = function () {
             this._background = new createjs.Bitmap(config.Game.ASSETS.getResult("backgroundOriginal"));
             this._thanksLabel = new objects.Label("Thank you for playing!", "bold 36px", "Verdana", "#000", 5, 5, false);
+            this._titleLabel = new objects.Label("SLOT MACHINE", "bold 16px", "Stint Ultra Condensed", "#000", 605, 570, false);
             this.Main();
         };
         EndGame.prototype.Update = function () { };
         EndGame.prototype.Main = function () {
             // Add the background
             this.addChild(this._background);
-            // Add the label
+            // Add the labels
             this.addChild(this._thanksLabel);
+            this.addChild(this._titleLabel);
         };
         return EndGame;
     }(objects.Scene));
