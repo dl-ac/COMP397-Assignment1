@@ -14,36 +14,36 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var scenes;
 (function (scenes) {
-    var EndGame = /** @class */ (function (_super) {
-        __extends(EndGame, _super);
+    var Start = /** @class */ (function (_super) {
+        __extends(Start, _super);
         // CONSTRUCTOR
-        function EndGame() {
+        function Start() {
             var _this = _super.call(this) || this;
             _this.Start();
             return _this;
         }
-        EndGame.prototype.Start = function () {
+        Start.prototype.Start = function () {
             this._background = new createjs.Bitmap(config.Game.ASSETS.getResult("backgroundOriginal"));
             this._thanksLabel = new objects.Label("Thank you for playing!", "bold 36px", "Verdana", "#000", 5, 5, false);
             this._titleLabel = new objects.Label("SLOT MACHINE", "bold 16px", "Stint Ultra Condensed", "#000", 605, 570, false);
-            this._playAgainButton = new objects.Button("playAgainButton", 10, config.Game.SCREEN_HEIGHT - 70, false);
+            this._playButton = new objects.Button("startPlayButton", 10, config.Game.SCREEN_HEIGHT - 70, false);
             this.Main();
         };
-        EndGame.prototype.Update = function () { };
-        EndGame.prototype.Main = function () {
+        Start.prototype.Update = function () { };
+        Start.prototype.Main = function () {
             // Add the background
             this.addChild(this._background);
             // Add the labels
             this.addChild(this._thanksLabel);
             this.addChild(this._titleLabel);
-            this.addChild(this._playAgainButton);
+            this.addChild(this._playButton);
             // Events
-            this._playAgainButton.on("click", function () {
+            this._playButton.on("click", function () {
                 config.Game.SCENE = scenes.State.PLAY;
             });
         };
-        return EndGame;
+        return Start;
     }(objects.Scene));
-    scenes.EndGame = EndGame;
+    scenes.Start = Start;
 })(scenes || (scenes = {}));
-//# sourceMappingURL=EndGame.js.map
+//# sourceMappingURL=Start.js.map

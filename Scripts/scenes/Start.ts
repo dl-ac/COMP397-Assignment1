@@ -1,10 +1,10 @@
 module scenes {
-  export class EndGame extends objects.Scene {
+  export class Start extends objects.Scene {
     // PRIVATE INSTANCE MEMBERS
     private _background: createjs.Bitmap;
     private _thanksLabel: objects.Label;
     private _titleLabel: objects.Label;
-    private _playAgainButton: objects.Button;
+    private _playButton: objects.Button;
 
     // CONSTRUCTOR
     constructor() {
@@ -25,7 +25,7 @@ module scenes {
         570,
         false
       );
-      this._playAgainButton = new objects.Button("playAgainButton", 10, config.Game.SCREEN_HEIGHT - 70, false);
+      this._playButton = new objects.Button("startPlayButton", 10, config.Game.SCREEN_HEIGHT - 70, false);
 
       this.Main();
     }
@@ -39,10 +39,10 @@ module scenes {
       // Add the labels
       this.addChild(this._thanksLabel);
       this.addChild(this._titleLabel);
-      this.addChild(this._playAgainButton);
+      this.addChild(this._playButton);
 
       // Events
-      this._playAgainButton.on("click", function() {
+      this._playButton.on("click", function() {
         config.Game.SCENE = State.PLAY;
       });
     }

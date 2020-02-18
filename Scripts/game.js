@@ -9,13 +9,6 @@ var Game = (function () {
     var currentScene;
     var assets;
     var assetManifest = [
-        // { id: "button", src: "./Assets/images/button.png" },
-        // { id: "placeholder", src: "./Assets/images/placeholder.png" },
-        // { id: "startButton", src: "./Assets/images/startButton.png" },
-        // { id: "nextButton", src: "./Assets/images/nextButton.png" },
-        // { id: "backButton", src: "./Assets/images/backButton.png" },
-        // { id: "ocean", src: "./Assets/images/ocean.gif" },
-        // { id: "plane", src: "./Assets/images/plane.png" },
         { id: "background", src: "./Assets/images/background.png" },
         { id: "backgroundOriginal", src: "./Assets/images/backgroundOriginal.png" },
         { id: "largeFrame", src: "./Assets/images/frameLarge.png" },
@@ -42,7 +35,9 @@ var Game = (function () {
         { id: "blankReel", src: "./Assets/images/BlankReel.png" },
         { id: "emptyButton", src: "./Assets/images/emptyButton.png" },
         { id: "quitButton", src: "./Assets/images/quitBtn.png" },
-        { id: "resetButton", src: "./Assets/images/resetBtn.png" }
+        { id: "resetButton", src: "./Assets/images/resetBtn.png" },
+        { id: "startGameButton", src: "./Assets/images/startGameBtn.png" },
+        { id: "playAgainButton", src: "./Assets/images/playAgainBtn.png" }
     ];
     function Preload() {
         assets = new createjs.LoadQueue(); // asset container
@@ -66,7 +61,7 @@ var Game = (function () {
         createjs.Ticker.on("tick", Update);
         stage.enableMouseOver(20);
         currentSceneState = scenes.State.NO_SCENE;
-        config.Game.SCENE = scenes.State.PLAY;
+        config.Game.SCENE = scenes.State.START;
         config.Game.SCREEN_WIDTH = canvas.width;
         config.Game.SCREEN_HEIGHT = canvas.height;
     }
@@ -94,6 +89,8 @@ var Game = (function () {
         }
         // switch to the new scene
         switch (config.Game.SCENE) {
+            case scenes.State.START:
+                currentScene = new scenes.Start();
             case scenes.State.PLAY:
                 currentScene = new scenes.Play();
                 break;

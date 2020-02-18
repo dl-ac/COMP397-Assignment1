@@ -105,11 +105,11 @@ deciding the results.
 
 | Sephiroth                                  | Cloud                              | Aeris                              | Barret                               | Blank                                  |
 | ------------------------------------------ | ---------------------------------- | ---------------------------------- | ------------------------------------ | -------------------------------------- |
-| ![Sephiroth](/Assets/images/Sephiroth.png) | ![Cloud](/Assets/images/Cloud.png) | ![Aeris](/Assets/images/Cloud.png) | ![Barret](/Assets/images/Barret.png) | ![Blank](/Assets/images/emptyReel.png) |
+| ![Sephiroth](/Assets/images/Sephiroth.png) | ![Cloud](/Assets/images/Cloud.png) | ![Aeris](/Assets/images/Cloud.png) | ![Barret](/Assets/images/Barret.png) | ![Blank](/Assets/images/BlankReel.png) |
 
 | Tifa                             | Yuffie                               | Vincent                                | Cid                            | Red XIII                                |
 | -------------------------------- | ------------------------------------ | -------------------------------------- | ------------------------------ | --------------------------------------- |
-| ![Tifa](/Assets/images/Tifa.png) | ![Yuffie](/Assets/images/Yuffie.png) | ![Vincent](/Assets/images/Vincent.png) | ![Cid](/Assets/images/Cid.png) | ![Red XIII](/Assets/images/REDXIII.png) |
+| ![Tifa](/Assets/images/Tifa.png) | ![Yuffie](/Assets/images/Yuffie.png) | ![Vincent](/Assets/images/Vincent.png) | ![Cid](/Assets/images/Cid.png) | ![Red XIII](/Assets/images/RedXIII.png) |
 
 - Buttons
 
