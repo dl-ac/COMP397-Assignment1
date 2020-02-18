@@ -77,17 +77,17 @@ The following buttons are available:
 The game will score the player based on the bet value and a multiplier. The multiplier will be based on the following
 table:
 
-| Slot      | 2x  | 3x  | 4x   | 5x   |
-| --------- | --- | --- | ---- | ---- |
-| Red XIII  | 0   | 5   | 25   | 100  |
-| Cid       | 0   | 5   | 25   | 100  |
-| Vincent   | 0   | 5   | 25   | 100  |
-| Yuffie    | 0   | 5   | 40   | 150  |
-| Tifa      | 0   | 5   | 40   | 150  |
-| Barret    | 5   | 30  | 100  | 750  |
-| Aeris     | 5   | 35  | 150  | 1000 |
-| Cloud     | 5   | 40  | 400  | 2000 |
-| Sephiroth | 10  | 100 | 1000 | 5000 |
+| Slot      |  2x |  3x |   4x |   5x |
+| --------- | --: | --: | ---: | ---: |
+| Red XIII  |   0 |   5 |   25 |  100 |
+| Cid       |   0 |   5 |   25 |  100 |
+| Vincent   |   0 |   5 |   25 |  100 |
+| Yuffie    |   0 |   5 |   40 |  150 |
+| Tifa      |   0 |   5 |   40 |  150 |
+| Barret    |   5 |  30 |  100 |  750 |
+| Aeris     |   5 |  35 |  150 | 1000 |
+| Cloud     |   5 |  40 |  400 | 2000 |
+| Sephiroth |  10 | 100 | 1000 | 5000 |
 
 The jackpot will be activated only if the player bets the max value (100) on the highest multiplier (5000).
 
