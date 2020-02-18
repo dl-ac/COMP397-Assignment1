@@ -105,6 +105,7 @@ let Game = (function() {
     switch (config.Game.SCENE) {
       case scenes.State.START:
         currentScene = new scenes.Start();
+        break;
 
       case scenes.State.PLAY:
         currentScene = new scenes.Play();

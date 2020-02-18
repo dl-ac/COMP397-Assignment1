@@ -24,9 +24,8 @@ var scenes;
         }
         Start.prototype.Start = function () {
             this._background = new createjs.Bitmap(config.Game.ASSETS.getResult("backgroundOriginal"));
-            this._thanksLabel = new objects.Label("Thank you for playing!", "bold 36px", "Verdana", "#000", 5, 5, false);
             this._titleLabel = new objects.Label("SLOT MACHINE", "bold 16px", "Stint Ultra Condensed", "#000", 605, 570, false);
-            this._playButton = new objects.Button("startPlayButton", 10, config.Game.SCREEN_HEIGHT - 70, false);
+            this._playButton = new objects.Button("startGameButton", 10, config.Game.SCREEN_HEIGHT - 70, false);
             this.Main();
         };
         Start.prototype.Update = function () { };
@@ -34,7 +33,6 @@ var scenes;
             // Add the background
             this.addChild(this._background);
             // Add the labels
-            this.addChild(this._thanksLabel);
             this.addChild(this._titleLabel);
             this.addChild(this._playButton);
             // Events

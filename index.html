@@ -1,61 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- CSS Section -->
+    <link rel="stylesheet" href="./Content/game.css" />
+    <link href="https://fonts.googleapis.com/css?family=Stint+Ultra+Condensed&display=swap" rel="stylesheet" />
+    <title>COMP397 - Assignment 1 - Slot Machine</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <!-- CSS Section -->
-  <link rel="stylesheet" href="./Content/game.css" />
-  <link href="https://fonts.googleapis.com/css?family=Stint+Ultra+Condensed&display=swap" rel="stylesheet">
-  <title>COMP397 - Assignment 1 - Slot Machine</title>
-</head>
+  <body>
+    <div id="mainContent">
+      <!-- The game "lives" inside the canvas -->
+      <canvas id="canvas" width="800" height="600"></canvas>
+    </div>
 
-<body>
-  <div id="mainContent">
-    <!-- The game "lives" inside the canvas -->
-    <canvas id="canvas" width="800" height="600"></canvas>
-  </div>
+    <!-- JavaScript Section -->
 
-  <!-- JavaScript Section -->
+    <!-- 3rd party libraries-->
+    <script src="./node_modules/easeljs/lib/easeljs.min.js"></script>
+    <script src="./node_modules/tweenjs/lib/tweenjs.min.js"></script>
+    <script src="./node_modules/soundjs/lib/soundjs.min.js"></script>
+    <script src="./node_modules/preloadjs/lib/preloadjs.min.js"></script>
 
-  <!-- 3rd party libraries-->
-  <script src="./node_modules/easeljs/lib/easeljs.min.js"></script>
-  <script src="./node_modules/tweenjs/lib/tweenjs.min.js"></script>
-  <script src="./node_modules/soundjs/lib/soundjs.min.js"></script>
-  <script src="./node_modules/preloadjs/lib/preloadjs.min.js"></script>
+    <!-- Game Scripts -->
 
-  <!-- Game Scripts -->
+    <!-- Component Scripts -->
+    <script src="./Scripts/util/Util.js"></script>
+    <script src="./Scripts/util/Math.js"></script>
+    <script src="./Scripts/objects/Vector2.js"></script>
+    <script src="./Scripts/objects/GameObject.js"></script>
+    <script src="./Scripts/objects/Scene.js"></script>
+    <script src="./Scripts/scenes/State.js"></script>
+    <script src="./Scripts/config/Game.js"></script>
 
-  <!-- Component Scripts -->
-  <script src="./Scripts/util/Util.js"></script>
-  <script src="./Scripts/util/Math.js"></script>
-  <script src="./Scripts/objects/Vector2.js"></script>
-  <script src="./Scripts/objects/GameObject.js"></script>
-  <script src="./Scripts/objects/Scene.js"></script>
-  <script src="./Scripts/scenes/State.js"></script>
-  <script src="./Scripts/config/Game.js"></script>
+    <!-- Managers -->
+    <script src="./Scripts//managers/Collision.js"></script>
 
-  <!-- Managers -->
-  <script src="./Scripts//managers/Collision.js"></script>
+    <!-- Game Objects -->
+    <script src="./Scripts/objects/ReelFigures.js"></script>
+    <script src="./Scripts/objects/ReelState.js"></script>
+    <script src="./Scripts/objects/SpinState.js"></script>
+    <script src="./Scripts/objects/Label.js"></script>
+    <script src="./Scripts/objects/Button.js"></script>
+    <script src="./Scripts/objects/LcdDisplay.js"></script>
+    <script src="./Scripts/objects/SingleReel.js"></script>
+    <script src="./Scripts/objects/Reel.js"></script>
+    <script src="./Scripts/managers/InternalValues.js"></script>
+    <script src="./Scripts/managers/SpinAndResult.js"></script>
 
-  <!-- Game Objects -->
-  <script src="./Scripts/objects/ReelFigures.js"></script>
-  <script src="./Scripts/objects/ReelState.js"></script>
-  <script src="./Scripts/objects/SpinState.js"></script>
-  <script src="./Scripts/objects/Label.js"></script>
-  <script src="./Scripts/objects/Button.js"></script>
-  <script src="./Scripts/objects/LcdDisplay.js"></script>
-  <script src="./Scripts/objects/SingleReel.js"></script>
-  <script src="./Scripts/objects/Reel.js"></script>
-  <script src="./Scripts/managers/InternalValues.js"></script>
-  <script src="./Scripts/managers/SpinAndResult.js"></script>
+    <!-- Scenes -->
+    <script src="./Scripts/scenes/Start.js"></script>
+    <script src="./Scripts/scenes/Play.js"></script>
+    <script src="./Scripts/scenes/EndGame.js"></script>
 
-  <!-- Scenes -->
-  <script src="./Scripts/scenes/Play.js"></script>
-  <script src="./Scripts/scenes/EndGame.js"></script>
-
-  <script src="./Scripts/game.js"></script>
-</body>
-
+    <script src="./Scripts/game.js"></script>
+  </body>
 </html>
