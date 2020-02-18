@@ -95,13 +95,12 @@ var managers;
             // Call the calculation function based on how many lines is selected
             for (var iCt = 0; iCt < valMng.Lines; iCt++) {
                 var value = this.CalculateWinningsInLine(valMng.SingleBet, managers.InternalValues.PAY_LINES_POSITIONS[iCt]);
-                if (value > 0) {
-                    // Set the winnings as the jackpot value and stop processing other lines
-                    if (value === SpinAndResult.JACKPOT_VALUE) {
-                        winnings = valMng.Jackpot;
-                        this._isJackpot = true;
-                        break;
-                    }
+                if (this._isJackpot) {
+                    winnings = valMng.Jackpot;
+                    this._winningLines = [iCt];
+                    break;
+                }
+                else if (value > 0) {
                     winnings += value;
                     this._winningLines.push(iCt + 1);
                 }
@@ -140,6 +139,11 @@ var managers;
             else {
                 // All of them are equal, check for winning for 5 equals figure
                 winnings = this.GetFigureMutiplier(this._betResult[lineIds[0]], 5) * betValue;
+                // Check for jackpot
+                if (this._betResult[lineIds[0]] == objects.ReelFigures.SEPHIROTH &&
+                    betValue == config.Game.VALUE_MANAGER.MaxBetValue) {
+                    this._isJackpot = true;
+                }
             }
             return winnings;
         };
@@ -242,6 +246,7 @@ var managers;
                     // Verify for jackpot
                     if (this._isJackpot) {
                         valMng.ResetJackpot();
+                        this._isJackpot = false;
                     }
                     else {
                         valMng.UpdateJackpot();
