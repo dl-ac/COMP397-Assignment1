@@ -56,21 +56,21 @@ The following buttons are available:
 
 ## Interface Sketch
 
-![Interface Sketch](/Assets/images/sketch.png)
+![Interface Sketch](/Assets/images/gameSketch.jpeg)
 
 ## Screen Description
 
 - Start Screen
 
-![Start Screen](/Assets/images/startScreen.png)
+![Start Screen](/Assets/images/startScreenSample.png)
 
 - Play Screen
 
-![Start Screen](/Assets/images/playScreen.png)
+![Start Screen](/Assets/images/playScreenSample.png)
 
 - End Game Screen
 
-![Start Screen](/Assets/images/endScreen.png)
+![Start Screen](/Assets/images/endScreenSample.png)
 
 ## Scoring
 
@@ -105,7 +105,7 @@ deciding the results.
 
 | Sephiroth                                  | Cloud                              | Aeris                              | Barret                               | Blank                                  |
 | ------------------------------------------ | ---------------------------------- | ---------------------------------- | ------------------------------------ | -------------------------------------- |
-| ![Sephiroth](/Assets/images/Sephiroth.png) | ![Cloud](/Assets/images/Cloud.png) | ![Aeris](/Assets/images/Cloud.png) | ![Barret](/Assets/images/Barret.png) | ![Blank](/Assets/images/BlankReel.png) |
+| ![Sephiroth](/Assets/images/Sephiroth.png) | ![Cloud](/Assets/images/Cloud.png) | ![Aeris](/Assets/images/Aeris.png) | ![Barret](/Assets/images/Barret.png) | ![Blank](/Assets/images/BlankReel.png) |
 
 | Tifa                             | Yuffie                               | Vincent                                | Cid                            | Red XIII                                |
 | -------------------------------- | ------------------------------------ | -------------------------------------- | ------------------------------ | --------------------------------------- |
