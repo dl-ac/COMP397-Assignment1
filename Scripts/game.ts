@@ -10,8 +10,6 @@ let Game = (function() {
 
   let assets: createjs.LoadQueue;
 
-  let valueManager: managers.InternalValues;
-
   let assetManifest = [
     // { id: "button", src: "./Assets/images/button.png" },
     // { id: "placeholder", src: "./Assets/images/placeholder.png" },
@@ -22,6 +20,7 @@ let Game = (function() {
     // { id: "plane", src: "./Assets/images/plane.png" },
 
     { id: "background", src: "./Assets/images/background.png" },
+    { id: "backgroundOriginal", src: "./Assets/images/backgroundOriginal.png" },
     { id: "largeFrame", src: "./Assets/images/frameLarge.png" },
     { id: "smallFrame", src: "./Assets/images/frameSmall.png" },
     { id: "betOneButton", src: "./Assets/images/betOneBtn.png" },
@@ -44,7 +43,9 @@ let Game = (function() {
     { id: "Vincent", src: "./Assets/images/Vincent.png" },
     { id: "Yuffie", src: "./Assets/images/Yuffie.png" },
     { id: "blankReel", src: "./Assets/images/BlankReel.png" },
-    { id: "emptyButton", src: "./Assets/images/emptyButton.png" }
+    { id: "emptyButton", src: "./Assets/images/emptyButton.png" },
+    { id: "quitButton", src: "./Assets/images/quitBtn.png" },
+    { id: "resetButton", src: "./Assets/images/resetBtn.png" }
   ];
 
   function Preload(): void {
@@ -111,6 +112,10 @@ let Game = (function() {
       case scenes.State.PLAY:
         console.log("switch to Play Scene");
         currentScene = new scenes.Play();
+        break;
+
+      case scenes.State.END:
+        currentScene = new scenes.EndGame();
         break;
     }
 

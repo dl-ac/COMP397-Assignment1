@@ -74,6 +74,21 @@ var managers;
             this._jackpotLcd = new objects.LcdDisplay("largeFrame", "JACKPOT", this._jackpot, 5, 5, false);
             this._winningsLcd = new objects.LcdDisplay("largeFrame", "WINNINGS", 0, 230, 5, false);
         };
+        InternalValues.prototype.Reset = function () {
+            // Reset the internal values
+            this._jackpot = InternalValues.INITIAL_JACKPOT;
+            this._credits = InternalValues.INITIAL_CREDITS;
+            this._betId = 0;
+            this._linesId = 0;
+            this._lines = InternalValues.LINES_BASE_VALUES[this._linesId];
+            this._betTotal = InternalValues.BET_BASE_VALUES[this._betId] * this._lines;
+            // Reset the LCD display
+            this._jackpotLcd.Value = this._jackpot;
+            this.Winnings = 0;
+            this._creditLcd.Value = this._credits;
+            this._betLcd.Value = this._betTotal;
+            this._linesLcd.Value = this._lines;
+        };
         // Add objects to a scene
         InternalValues.prototype.AddObjectsToScene = function (scene) {
             scene.addChild(this._creditLcd);
