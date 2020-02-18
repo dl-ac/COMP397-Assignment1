@@ -62,15 +62,15 @@ The following buttons are available:
 
 - Start Screen
 
-![Start Screen](/Assets/images/startScreenSample.png)
+![Start Screenshot](/Assets/images/startScreenSS.png)
 
 - Play Screen
 
-![Start Screen](/Assets/images/playScreenSample.png)
+![Start Screenshot](/Assets/images/playScreenSS.png)
 
 - End Game Screen
 
-![Start Screen](/Assets/images/endScreenSample.png)
+![Start Screenshot](/Assets/images/endScreenSS.png)
 
 ## Scoring
 
